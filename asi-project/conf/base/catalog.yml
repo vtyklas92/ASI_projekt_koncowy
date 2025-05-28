@@ -1,35 +1,41 @@
-# Raw Data
-pokemon_master_df:
-  type: pandas.ParquetDataset
-  filepath: data/02_intermediate/pokemon_master.parquet
+#================================================================================
+# Pipeline: data_engineering
+#================================================================================
 
-# Processed Data
-train_df:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/train.csv
+# Wejście: Ścieżka do surowych danych nie jest zarządzana przez Kedro,
+# ale podajemy ją w parametrach.
 
-test_df:
-  type: pandas.CSVDataset
-  filepath: data/03_primary/test.csv
+# Wyjście: Podzielone zbiory danych, które będą wersjonowane.
+train_data:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/train_data.csv
 
-# Model
+
+test_data:
+  type: pandas.CSVDataSet
+  filepath: data/02_intermediate/test_data.csv
+
+
+#================================================================================
+# Pipeline: data_science
+#================================================================================
+
+# Wyjścia: Wytrenowany model, raport i wykres - wszystko wersjonowane.
 autogluon_predictor:
-  type: pickle.PickleDataset
-  filepath: data/06_models/autogluon_predictor.pkl
+  type: pickle.PickleDataSet
+  filepath: data/06_models/autogluon_pokemon_predictor.pkl
   versioned: true
+  # Uwaga: AutoGluon zapisuje całe foldery. PickleDataSet może być niewystarczający
+  # dla bardzo dużych modeli lub jeśli chcesz przenosić model. W takim scenariuszu
+  # lepsze byłoby stworzenie własnego DataSet'u lub zarządzanie ścieżką.
+  # Na potrzeby tego przykładu, pickle jest najprostszym rozwiązaniem.
 
-# Reporting
-evaluation_metrics:
-  type: json.JSONDataset
-  filepath: data/07_model_output/evaluation_metrics.json
-  versioned: true
-
-classification_report_str:
-  type: text.TextDataset
-  filepath: data/08_reporting/classification_report.txt
+classification_report:
+  type: json.JSONDataSet
+  filepath: data/07_model_output/classification_report.json
   versioned: true
 
 confusion_matrix_plot:
-  type: kedro_datasets.matplotlib.MatplotlibWriter
+  type: matplotlib.MatplotlibWriter
   filepath: data/08_reporting/confusion_matrix.png
   versioned: true

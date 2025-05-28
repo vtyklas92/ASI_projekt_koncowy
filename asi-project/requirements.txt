@@ -1,11 +1,10 @@
-ipython>=8.10
-jupyterlab>=3.0
-kedro-datasets>=3.0
-kedro-viz>=6.7.0
-kedro[jupyter]~=0.19.12
+ipython
+jupyterlab
+kedro-datasets
+kedro-viz
+kedro[jupyter]
 notebook
-scikit-learn~=1.5.1
-setuptools; python_version >= "3.12"
+scikit-learn
 dvc-gdrive
 pandas
 scikit-learn
@@ -13,3 +12,5 @@ pyspark
 kedro-datasets
 kedro-datasets[matplotlib]
 pyarrow
+matplotlib
+seaborn
