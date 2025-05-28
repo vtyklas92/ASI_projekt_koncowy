@@ -1,38 +1,29 @@
-#================================================================================
-# Pipeline: data_engineering
-#================================================================================
+# Dane wyjściowe z pipeline'u data_engineering
 
-# Wejście: Ścieżka do surowych danych nie jest zarządzana przez Kedro,
-# ale podajemy ją w parametrach.
+pokemon_metadata:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/pokemon_metadata.pq
+  versioned: true
 
-# Wyjście: Podzielone zbiory danych, które będą wersjonowane.
 train_data:
-  type: pandas.CSVDataSet
-  filepath: data/02_intermediate/train_data.csv
-
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/train_data.csv
+  versioned: true
 
 test_data:
-  type: pandas.CSVDataSet
-  filepath: data/02_intermediate/test_data.csv
+  type: pandas.CSVDataset
+  filepath: data/05_model_input/test_data.csv
+  versioned: true
 
-
-#================================================================================
-# Pipeline: data_science
-#================================================================================
-
-# Wyjścia: Wytrenowany model, raport i wykres - wszystko wersjonowane.
+# Dane wyjściowe z pipeline'u data_science
 autogluon_predictor:
-  type: pickle.PickleDataSet
+  type: pickle.PickleDataset
   filepath: data/06_models/autogluon_pokemon_predictor.pkl
   versioned: true
-  # Uwaga: AutoGluon zapisuje całe foldery. PickleDataSet może być niewystarczający
-  # dla bardzo dużych modeli lub jeśli chcesz przenosić model. W takim scenariuszu
-  # lepsze byłoby stworzenie własnego DataSet'u lub zarządzanie ścieżką.
-  # Na potrzeby tego przykładu, pickle jest najprostszym rozwiązaniem.
 
 classification_report:
-  type: json.JSONDataSet
-  filepath: data/07_model_output/classification_report.json
+  type: json.JSONDataset
+  filepath: data/08_reporting/classification_report.json
   versioned: true
 
 confusion_matrix_plot:

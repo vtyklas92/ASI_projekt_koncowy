@@ -1,14 +1,14 @@
-from kedro.pipeline import Pipeline, node
+from kedro.pipeline import Pipeline, node, pipeline
 from .nodes import train_model, evaluate_model
 
 def create_pipeline(**kwargs) -> Pipeline:
-    return Pipeline(
+    return pipeline(
         [
             node(
                 func=train_model,
-                inputs=["train_data", "params:data_science_params"],
+                inputs=["train_data", "params:data_science"],
                 outputs="autogluon_predictor",
-                name="train_autogluon_model_node",
+                name="train_model_node",
             ),
             node(
                 func=evaluate_model,

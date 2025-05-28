@@ -167,3 +167,4 @@ venv.bak/
 mlruns/*
 
 /notebooks
+/AutogluonModels

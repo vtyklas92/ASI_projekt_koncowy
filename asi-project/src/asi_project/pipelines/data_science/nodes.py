@@ -1,76 +1,97 @@
-# src/pokemon_kedro_project/pipelines/data_science/nodes.py
-
 import pandas as pd
 from autogluon.multimodal import MultiModalPredictor
 from sklearn.metrics import classification_report, confusion_matrix
 import matplotlib.pyplot as plt
 import seaborn as sns
 from typing import Dict, Any, Tuple
-import tempfile  # <--- DODAJEMY IMPORT
-import os  # <--- DODAJEMY IMPORT
+import tempfile
+import os
 
 
-def train_model(train_data: pd.DataFrame, parameters: Dict[str, Any]) -> MultiModalPredictor:
-    """Trenuje model klasyfikacji obrazów przy użyciu AutoGluon."""
+def train_model(train_data: pd.DataFrame, parameters: Dict[str, Any]) -> "MultiModalPredictor":
+    """Trenuje model klasyfikacji obrazów przy użyciu AutoGluon.
+
+    Funkcja ta inicjalizuje i trenuje `MultiModalPredictor` z biblioteki
+    AutoGluon. Aby zapewnić niezawodność i ominąć potencjalne problemy z
+    przekazywaniem DataFrame w pamięci, dane treningowe są najpierw zapisywane
+    do tymczasowego pliku CSV, a następnie ścieżka do tego pliku jest
+    przekazywana do metody `.fit()`.
+
+    Args:
+        train_data: Ramka danych pandas zawierająca dane treningowe.
+                    Oczekiwane kolumny to 'image' ze ścieżkami do obrazów
+                    i 'label' z etykietami klas.
+        parameters: Słownik zawierający parametry. Oczekiwane są klucze:
+            - 'autogluon' (Dict): Parametry dla AutoGluon, np. 'time_limit',
+              'presets', 'eval_metric'.
+            - 'split' (Dict): Parametry podziału, w tym 'target_column'.
+
+    Returns:
+        MultiModalPredictor: Wytrenowany i gotowy do użycia obiekt predyktora
+                             AutoGluon.
+    """
     autogluon_params = parameters["autogluon"]
-    target_column = parameters["target_column"]
+    target_column = parameters["split"]["target_column"]
 
     predictor = MultiModalPredictor(
         label=target_column,
         eval_metric=autogluon_params["eval_metric"]
     )
 
-    # === POCZĄTEK ZMIANY ===
-    # Tworzymy tymczasowy folder, aby zapisać dane w formacie,
-    # który AutoGluon na pewno poprawnie odczyta (jako plik CSV na dysku).
     with tempfile.TemporaryDirectory() as temp_dir:
         temp_train_csv_path = os.path.join(temp_dir, 'train.csv')
-
-        # Zapisujemy DataFrame otrzymany od Kedro do tymczasowego pliku CSV
         train_data.to_csv(temp_train_csv_path, index=False)
 
-        print(f"Temporarily saving training data to: {temp_train_csv_path}")
-        print("Starting AutoGluon training from file path...")
+        print(f"Dane treningowe zapisane tymczasowo w: {temp_train_csv_path}")
+        print("Rozpoczynam trening AutoGluon...")
 
-        # Przekazujemy do .fit() ŚCIEŻKĘ do pliku, a nie obiekt DataFrame
         predictor.fit(
-            train_data=temp_train_csv_path,  # <--- KLUCZOWA ZMIANA
+            train_data=temp_train_csv_path,
             time_limit=autogluon_params["time_limit"],
             presets=autogluon_params["presets"],
         )
 
-    # Folder tymczasowy i jego zawartość są automatycznie usuwane po wyjściu z bloku 'with'
-    # === KONIEC ZMIANY ===
-
-    print("Training finished.")
-
+    print("Trening zakończony.")
     return predictor
 
 
-def evaluate_model(
-        predictor: MultiModalPredictor, test_data: pd.DataFrame
-) -> Tuple[Dict, plt.Figure]:
-    """Ocenia wytrenowany model i generuje raport oraz macierz pomyłek."""
-    print("Evaluating model...")
+def evaluate_model(predictor: "MultiModalPredictor", test_data: pd.DataFrame) -> Tuple[Dict, plt.Figure]:
+    """Ocenia wytrenowany model i generuje artefakty ewaluacyjne.
 
-    # Przekazujemy DataFrame do ewaluacji - tutaj to działa poprawnie
+    Funkcja generuje predykcje na zbiorze testowym, a następnie tworzy
+    dwa kluczowe artefakty: szczegółowy raport klasyfikacji w formie
+    słownika oraz wizualizację macierzy pomyłek jako obiekt figury
+    matplotlib.
+
+    Args:
+        predictor: Wytrenowany obiekt `MultiModalPredictor` zwrócony przez
+                   węzeł `train_model`.
+        test_data: Ramka danych pandas zawierająca dane testowe. Oczekiwane
+                   kolumny to 'image' i 'label'.
+
+    Returns:
+        Krotka zawierająca dwa elementy:
+            - Pierwszy element (Dict): Słownik reprezentujący raport
+              klasyfikacji z metrykami (precision, recall, f1-score)
+              dla każdej z klas.
+            - Drugi element (plt.Figure): Obiekt figury Matplotlib
+              zawierający wykres macierzy pomyłek.
+    """
     y_true = test_data['label']
     y_pred = predictor.predict(data=test_data)
 
-    # Generowanie raportu klasyfikacji jako słownik
     report_dict = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
-    print("Classification Report generated.")
 
-    # Generowanie macierzy pomyłek jako wykres matplotlib
     actual_target_names = sorted(y_true.unique())
     cm = confusion_matrix(y_true, y_pred, labels=actual_target_names)
 
-    fig, ax = plt.subplots(figsize=(18, 15))
+    fig, ax = plt.subplots(figsize=(20, 18))
     sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
                 xticklabels=actual_target_names, yticklabels=actual_target_names, ax=ax)
-    ax.set_xlabel('Predicted Class')
-    ax.set_ylabel('True Class')
-    ax.set_title('Confusion Matrix')
-    print("Confusion Matrix plot generated.")
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    ax.set_xlabel('Predicted Class', fontsize=12)
+    ax.set_ylabel('True Class', fontsize=12)
+    ax.set_title('Confusion Matrix', fontsize=14)
+    fig.tight_layout()
 
     return report_dict, fig

@@ -1,16 +1,17 @@
 # Parametry dla pipeline'u data_engineering
-data_engineering_params:
+data_engineering:
   raw_data_path: "data/01_raw/PokemonData"
 
 # Parametry dla pipeline'u data_science
-data_science_params:
+data_science:
   # Parametry podziału danych
-  test_size: 0.22
-  random_state: 42
-  target_column: "label"
+  split:
+    test_size: 0.22
+    random_state: 42
+    target_column: "label"
 
   # Parametry treningu AutoGluon
   autogluon:
-    time_limit: 600  # w sekundach
+    time_limit: 600
     presets: "medium_quality"
     eval_metric: "accuracy"

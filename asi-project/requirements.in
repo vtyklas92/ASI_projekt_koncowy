@@ -1,0 +1,34 @@
+# requirements.in
+
+# -----------------
+# Framework Kedro
+# -----------------
+# Rdzeń frameworka
+kedro
+
+# Niezbędne zestawy danych dla tego projektu
+kedro-datasets[pandas.CSVDataSet, matplotlib, json, pandas.ParquetDataSet]
+
+# -----------------
+# Biblioteki ML
+# -----------------
+autogluon.multimodal
+scikit-learn
+seaborn
+
+# ----------------------------------------------------
+# Wersja PyTorch z CUDA - opcjonalne jeśli chcesz używać GPU do AutoML
+# ----------------------------------------------------
+# pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+
+# -----------------
+# Narzędzia Deweloperskie (Zalecane)
+# -----------------
+# Do kompilowania tego pliku (`pip-compile`)
+pip-tools
+
+# Do wizualizacji pipeline'ów (`kedro viz`)
+kedro-viz
+
+# Do interaktywnej sesji (`kedro ipython`)
+ipython
