@@ -6,3 +6,10 @@ kedro[jupyter]~=0.19.12
 notebook
 scikit-learn~=1.5.1
 setuptools; python_version >= "3.12"
+dvc-gdrive
+pandas
+scikit-learn
+pyspark
+kedro-datasets
+kedro-datasets[matplotlib]
+pyarrow

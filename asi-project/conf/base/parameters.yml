@@ -1,0 +1,40 @@
+#------------------------------------------------------------------
+# Parameters for the Data Engineering Pipeline
+#------------------------------------------------------------------
+data_engineering:
+  # Path to the root directory of the raw Pokemon image data.
+  # This corresponds to the 'pokemon_data_dir' argument in the 'create_image_dataframe' node.
+  pokemon_data_dir: data/01_raw/PokemonData/
+
+  # The proportion of the dataset to include in the test split.
+  # Corresponds to the 'test_size' argument in the 'split_data' node.
+  test_size: 0.22
+
+  # Seed for the random number generator to ensure reproducible splits.
+  # Corresponds to the 'random_state' argument in the 'split_data' node.
+  random_state: 42
+
+
+#------------------------------------------------------------------
+# Parameters for the Data Science Pipeline
+#------------------------------------------------------------------
+data_science:
+  # A dictionary of parameters passed directly to the 'train_model' node.
+  # This grouping makes it easy to manage all training-related settings.
+  autogluon_training:
+    # The name of the column containing the target variable (labels).
+    label_column: "label"
+
+    # The evaluation metric for AutoGluon to optimize during training.
+    eval_metric: "accuracy"
+
+    # The total time in seconds that training is allowed to run.
+    time_limit: 600
+
+    # AutoGluon's built-in configuration for balancing training time and model quality.
+    # Options: 'best_quality', 'high_quality', 'medium_quality', 'good_quality'
+    presets: "medium_quality"
+
+    # A path required by AutoGluon to store its intermediate models and artifacts.
+    # This is separate from the final model saved by Kedro's Data Catalog.
+    save_path: "data/06_models/autogluon_intermediate"

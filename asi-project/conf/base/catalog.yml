@@ -1,0 +1,35 @@
+# Raw Data
+pokemon_master_df:
+  type: pandas.ParquetDataset
+  filepath: data/02_intermediate/pokemon_master.parquet
+
+# Processed Data
+train_df:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/train.csv
+
+test_df:
+  type: pandas.CSVDataset
+  filepath: data/03_primary/test.csv
+
+# Model
+autogluon_predictor:
+  type: pickle.PickleDataset
+  filepath: data/06_models/autogluon_predictor.pkl
+  versioned: true
+
+# Reporting
+evaluation_metrics:
+  type: json.JSONDataset
+  filepath: data/07_model_output/evaluation_metrics.json
+  versioned: true
+
+classification_report_str:
+  type: text.TextDataset
+  filepath: data/08_reporting/classification_report.txt
+  versioned: true
+
+confusion_matrix_plot:
+  type: kedro_datasets.matplotlib.MatplotlibWriter
+  filepath: data/08_reporting/confusion_matrix.png
+  versioned: true
