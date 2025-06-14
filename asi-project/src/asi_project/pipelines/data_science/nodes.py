@@ -1,14 +1,17 @@
+import os
+import tempfile
+from typing import Any
+
+import matplotlib.pyplot as plt
 import pandas as pd
+import seaborn as sns
 from autogluon.multimodal import MultiModalPredictor
 from sklearn.metrics import classification_report, confusion_matrix
-import matplotlib.pyplot as plt
-import seaborn as sns
-from typing import Dict, Any, Tuple
-import tempfile
-import os
 
 
-def train_model(train_data: pd.DataFrame, parameters: Dict[str, Any]) -> "MultiModalPredictor":
+def train_model(
+    train_data: pd.DataFrame, parameters: dict[str, Any]
+) -> "MultiModalPredictor":
     """Trenuje model klasyfikacji obrazów przy użyciu AutoGluon.
 
     Funkcja ta inicjalizuje i trenuje `MultiModalPredictor` z biblioteki
@@ -34,12 +37,11 @@ def train_model(train_data: pd.DataFrame, parameters: Dict[str, Any]) -> "MultiM
     target_column = parameters["split"]["target_column"]
 
     predictor = MultiModalPredictor(
-        label=target_column,
-        eval_metric=autogluon_params["eval_metric"]
+        label=target_column, eval_metric=autogluon_params["eval_metric"]
     )
 
     with tempfile.TemporaryDirectory() as temp_dir:
-        temp_train_csv_path = os.path.join(temp_dir, 'train.csv')
+        temp_train_csv_path = os.path.join(temp_dir, "train.csv")
         train_data.to_csv(temp_train_csv_path, index=False)
 
         print(f"Dane treningowe zapisane tymczasowo w: {temp_train_csv_path}")
@@ -55,7 +57,9 @@ def train_model(train_data: pd.DataFrame, parameters: Dict[str, Any]) -> "MultiM
     return predictor
 
 
-def evaluate_model(predictor: "MultiModalPredictor", test_data: pd.DataFrame) -> Tuple[Dict, plt.Figure]:
+def evaluate_model(
+    predictor: "MultiModalPredictor", test_data: pd.DataFrame
+) -> tuple[dict, plt.Figure]:
     """Ocenia wytrenowany model i generuje artefakty ewaluacyjne.
 
     Funkcja generuje predykcje na zbiorze testowym, a następnie tworzy
@@ -77,21 +81,30 @@ def evaluate_model(predictor: "MultiModalPredictor", test_data: pd.DataFrame) ->
             - Drugi element (plt.Figure): Obiekt figury Matplotlib
               zawierający wykres macierzy pomyłek.
     """
-    y_true = test_data['label']
+    y_true = test_data["label"]
     y_pred = predictor.predict(data=test_data)
 
-    report_dict = classification_report(y_true, y_pred, output_dict=True, zero_division=0)
+    report_dict = classification_report(
+        y_true, y_pred, output_dict=True, zero_division=0
+    )
 
     actual_target_names = sorted(y_true.unique())
     cm = confusion_matrix(y_true, y_pred, labels=actual_target_names)
 
     fig, ax = plt.subplots(figsize=(20, 18))
-    sns.heatmap(cm, annot=True, fmt='d', cmap='Blues',
-                xticklabels=actual_target_names, yticklabels=actual_target_names, ax=ax)
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=actual_target_names,
+        yticklabels=actual_target_names,
+        ax=ax,
+    )
     plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
-    ax.set_xlabel('Predicted Class', fontsize=12)
-    ax.set_ylabel('True Class', fontsize=12)
-    ax.set_title('Confusion Matrix', fontsize=14)
+    ax.set_xlabel("Predicted Class", fontsize=12)
+    ax.set_ylabel("True Class", fontsize=12)
+    ax.set_title("Confusion Matrix", fontsize=14)
     fig.tight_layout()
 
     return report_dict, fig

@@ -1,10 +1,11 @@
 import os
+from typing import Any
+
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from typing import Dict, Any, Tuple
 
 
-def create_pokemon_dataframe(parameters: Dict[str, Any]) -> pd.DataFrame:
+def create_pokemon_dataframe(parameters: dict[str, Any]) -> pd.DataFrame:
     """Skanuje katalog z surowymi danymi i tworzy DataFrame.
 
     Funkcja przeszukuje podfoldery w podanej ścieżce, traktując każdą nazwę
@@ -28,26 +29,36 @@ def create_pokemon_dataframe(parameters: Dict[str, Any]) -> pd.DataFrame:
     """
     raw_data_path = parameters["raw_data_path"]
     if not os.path.isdir(raw_data_path):
-        raise FileNotFoundError(f"Katalog z danymi nie został znaleziony: {raw_data_path}")
+        raise FileNotFoundError(
+            f"Katalog z danymi nie został znaleziony: {raw_data_path}"
+        )
 
     image_paths = []
     labels = []
-    class_names = sorted([d for d in os.listdir(raw_data_path) if os.path.isdir(os.path.join(raw_data_path, d))])
+    class_names = sorted(
+        [
+            d
+            for d in os.listdir(raw_data_path)
+            if os.path.isdir(os.path.join(raw_data_path, d))
+        ]
+    )
 
     for class_name in class_names:
         class_dir = os.path.join(raw_data_path, class_name)
         for image_name in os.listdir(class_dir):
-            if image_name.lower().endswith(('.png', '.jpg', '.jpeg')):
+            if image_name.lower().endswith((".png", ".jpg", ".jpeg")):
                 # Kluczowe: Używamy ścieżek bezwzględnych, aby uniknąć problemów
                 image_paths.append(os.path.abspath(os.path.join(class_dir, image_name)))
                 labels.append(class_name)
 
-    df = pd.DataFrame({'image': image_paths, 'label': labels})
+    df = pd.DataFrame({"image": image_paths, "label": labels})
     print(f"Stworzono DataFrame z {len(df)} obrazami.")
     return df
 
 
-def split_data(df: pd.DataFrame, parameters: Dict[str, Any]) -> Tuple[pd.DataFrame, pd.DataFrame]:
+def split_data(
+    df: pd.DataFrame, parameters: dict[str, Any]
+) -> tuple[pd.DataFrame, pd.DataFrame]:
     """Dzieli dane na zbiory treningowe i testowe.
 
     Funkcja wykorzystuje stratyfikowany podział, aby zapewnić, że proporcje
@@ -61,7 +72,8 @@ def split_data(df: pd.DataFrame, parameters: Dict[str, Any]) -> Tuple[pd.DataFra
                     znajdują się w zagnieżdżonym słowniku pod kluczem 'split':
             'test_size' (float): Procent danych, który ma trafić do zbioru testowego.
             'target_column' (str): Nazwa kolumny, która ma być użyta do stratyfikacji.
-            'random_state' (int): Ziarno losowości dla zapewnienia powtarzalności podziału.
+            'random_state' (int):
+            Ziarno losowości dla zapewnienia powtarzalności podziału.
 
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: Krotka zawierająca dwie ramki danych:
@@ -72,7 +84,10 @@ def split_data(df: pd.DataFrame, parameters: Dict[str, Any]) -> Tuple[pd.DataFra
         df,
         test_size=parameters["split"]["test_size"],
         stratify=df[parameters["split"]["target_column"]],
-        random_state=parameters["split"]["random_state"]
+        random_state=parameters["split"]["random_state"],
     )
-    print(f"Podział danych zakończony. Zbiór treningowy: {len(train_df)}, Zbiór testowy: {len(test_df)}")
+    print(
+        f"Podział danych zakończony. Zbiór treningowy: {len(train_df)},"
+        f"Zbiór testowy: {len(test_df)}"
+    )
     return train_df, test_df

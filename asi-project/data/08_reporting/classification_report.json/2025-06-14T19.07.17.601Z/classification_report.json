@@ -1,26 +1,26 @@
 {
   "Abra": {
-    "precision": 0.8888888888888888,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9411764705882353,
+    "f1-score": 1.0,
     "support": 8.0
   },
   "Aerodactyl": {
-    "precision": 0.8,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.8888888888888888,
+    "f1-score": 1.0,
     "support": 8.0
   },
   "Alakazam": {
     "precision": 0.75,
-    "recall": 0.5,
-    "f1-score": 0.6,
+    "recall": 1.0,
+    "f1-score": 0.8571428571428571,
     "support": 6.0
   },
   "Alolan Sandslash": {
-    "precision": 1.0,
+    "precision": 0.9,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9473684210526315,
     "support": 9.0
   },
   "Arbok": {
@@ -30,15 +30,15 @@
     "support": 9.0
   },
   "Arcanine": {
-    "precision": 0.9,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9473684210526315,
+    "f1-score": 1.0,
     "support": 9.0
   },
   "Articuno": {
-    "precision": 1.0,
-    "recall": 0.9,
-    "f1-score": 0.9473684210526315,
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Beedrill": {
@@ -54,15 +54,15 @@
     "support": 9.0
   },
   "Blastoise": {
-    "precision": 1.0,
+    "precision": 0.9,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9473684210526315,
     "support": 9.0
   },
   "Bulbasaur": {
-    "precision": 1.0,
+    "precision": 0.9,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9473684210526315,
     "support": 9.0
   },
   "Butterfree": {
@@ -72,63 +72,63 @@
     "support": 6.0
   },
   "Caterpie": {
-    "precision": 1.0,
+    "precision": 0.8888888888888888,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9411764705882353,
     "support": 8.0
   },
   "Chansey": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.9411764705882353,
     "support": 9.0
   },
   "Charizard": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 8.0
-  },
-  "Charmander": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 11.0
-  },
-  "Charmeleon": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 10.0
-  },
-  "Clefable": {
     "precision": 1.0,
     "recall": 0.875,
     "f1-score": 0.9333333333333333,
     "support": 8.0
   },
-  "Clefairy": {
-    "precision": 0.9090909090909091,
-    "recall": 1.0,
+  "Charmander": {
+    "precision": 1.0,
+    "recall": 0.9090909090909091,
     "f1-score": 0.9523809523809523,
+    "support": 11.0
+  },
+  "Charmeleon": {
+    "precision": 0.9,
+    "recall": 0.9,
+    "f1-score": 0.9,
+    "support": 10.0
+  },
+  "Clefable": {
+    "precision": 1.0,
+    "recall": 0.75,
+    "f1-score": 0.8571428571428571,
+    "support": 8.0
+  },
+  "Clefairy": {
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1-score": 0.9090909090909091,
     "support": 10.0
   },
   "Cloyster": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "precision": 0.9090909090909091,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9090909090909091,
     "support": 11.0
   },
   "Cubone": {
-    "precision": 0.75,
-    "recall": 1.0,
-    "f1-score": 0.8571428571428571,
+    "precision": 0.7777777777777778,
+    "recall": 0.7777777777777778,
+    "f1-score": 0.7777777777777778,
     "support": 9.0
   },
   "Dewgong": {
     "precision": 1.0,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.9411764705882353,
+    "recall": 0.7777777777777778,
+    "f1-score": 0.875,
     "support": 9.0
   },
   "Diglett": {
@@ -138,9 +138,9 @@
     "support": 9.0
   },
   "Ditto": {
-    "precision": 0.9,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9473684210526315,
+    "f1-score": 1.0,
     "support": 9.0
   },
   "Dodrio": {
@@ -162,9 +162,9 @@
     "support": 9.0
   },
   "Dragonite": {
-    "precision": 1.0,
+    "precision": 0.7333333333333333,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.8461538461538461,
     "support": 11.0
   },
   "Dratini": {
@@ -175,26 +175,26 @@
   },
   "Drowzee": {
     "precision": 1.0,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.9411764705882353,
+    "recall": 1.0,
+    "f1-score": 1.0,
     "support": 9.0
   },
   "Dugtrio": {
-    "precision": 1.0,
+    "precision": 0.9166666666666666,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9565217391304348,
     "support": 11.0
   },
   "Eevee": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.75,
+    "f1-score": 0.8571428571428571,
     "support": 8.0
   },
   "Ekans": {
-    "precision": 1.0,
+    "precision": 0.8888888888888888,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9411764705882353,
     "support": 8.0
   },
   "Electabuzz": {
@@ -216,9 +216,9 @@
     "support": 10.0
   },
   "Exeggutor": {
-    "precision": 0.9166666666666666,
-    "recall": 1.0,
-    "f1-score": 0.9565217391304348,
+    "precision": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
     "support": 11.0
   },
   "Farfetchd": {
@@ -228,15 +228,15 @@
     "support": 11.0
   },
   "Fearow": {
-    "precision": 0.9166666666666666,
-    "recall": 1.0,
-    "f1-score": 0.9565217391304348,
+    "precision": 0.7692307692307693,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.8333333333333334,
     "support": 11.0
   },
   "Flareon": {
-    "precision": 1.0,
+    "precision": 0.9090909090909091,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Gastly": {
@@ -253,62 +253,62 @@
   },
   "Geodude": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.625,
+    "f1-score": 0.7692307692307693,
     "support": 8.0
   },
   "Gloom": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
     "support": 11.0
   },
   "Golbat": {
-    "precision": 0.9,
+    "precision": 1.0,
     "recall": 0.9,
-    "f1-score": 0.9,
+    "f1-score": 0.9473684210526315,
     "support": 10.0
   },
   "Goldeen": {
-    "precision": 1.0,
+    "precision": 0.9090909090909091,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Golduck": {
-    "precision": 0.9090909090909091,
+    "precision": 0.8333333333333334,
     "recall": 1.0,
-    "f1-score": 0.9523809523809523,
+    "f1-score": 0.9090909090909091,
     "support": 10.0
   },
   "Golem": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 10.0
+  },
+  "Graveler": {
+    "precision": 0.9,
+    "recall": 1.0,
+    "f1-score": 0.9473684210526315,
+    "support": 9.0
+  },
+  "Grimer": {
     "precision": 0.9090909090909091,
     "recall": 1.0,
     "f1-score": 0.9523809523809523,
     "support": 10.0
   },
-  "Graveler": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 9.0
-  },
-  "Grimer": {
-    "precision": 1.0,
-    "recall": 0.9,
-    "f1-score": 0.9473684210526315,
-    "support": 10.0
-  },
   "Growlithe": {
-    "precision": 1.0,
-    "recall": 0.9,
-    "f1-score": 0.9473684210526315,
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Gyarados": {
-    "precision": 1.0,
+    "precision": 0.7692307692307693,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.8695652173913043,
     "support": 10.0
   },
   "Haunter": {
@@ -330,9 +330,9 @@
     "support": 11.0
   },
   "Horsea": {
-    "precision": 0.9230769230769231,
-    "recall": 1.0,
-    "f1-score": 0.96,
+    "precision": 1.0,
+    "recall": 0.8333333333333334,
+    "f1-score": 0.9090909090909091,
     "support": 12.0
   },
   "Hypno": {
@@ -342,15 +342,15 @@
     "support": 10.0
   },
   "Ivysaur": {
-    "precision": 0.8888888888888888,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.8888888888888888,
+    "precision": 0.875,
+    "recall": 0.7777777777777778,
+    "f1-score": 0.8235294117647058,
     "support": 9.0
   },
   "Jigglypuff": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9,
+    "f1-score": 0.9473684210526315,
     "support": 10.0
   },
   "Jolteon": {
@@ -361,14 +361,14 @@
   },
   "Jynx": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
     "support": 11.0
   },
   "Kabuto": {
-    "precision": 1.0,
-    "recall": 0.8181818181818182,
-    "f1-score": 0.9,
+    "precision": 0.9166666666666666,
+    "recall": 1.0,
+    "f1-score": 0.9565217391304348,
     "support": 11.0
   },
   "Kabutops": {
@@ -378,9 +378,9 @@
     "support": 9.0
   },
   "Kadabra": {
-    "precision": 0.7692307692307693,
-    "recall": 0.9090909090909091,
-    "f1-score": 0.8333333333333334,
+    "precision": 1.0,
+    "recall": 0.8181818181818182,
+    "f1-score": 0.9,
     "support": 11.0
   },
   "Kakuna": {
@@ -391,14 +391,14 @@
   },
   "Kangaskhan": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
     "support": 11.0
   },
   "Kingler": {
-    "precision": 0.8181818181818182,
-    "recall": 0.9,
-    "f1-score": 0.8571428571428571,
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1-score": 0.8888888888888888,
     "support": 10.0
   },
   "Koffing": {
@@ -408,15 +408,15 @@
     "support": 11.0
   },
   "Krabby": {
-    "precision": 0.9,
-    "recall": 0.8181818181818182,
-    "f1-score": 0.8571428571428571,
+    "precision": 0.7692307692307693,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.8333333333333334,
     "support": 11.0
   },
   "Lapras": {
     "precision": 1.0,
-    "recall": 0.9166666666666666,
-    "f1-score": 0.9565217391304348,
+    "recall": 0.8333333333333334,
+    "f1-score": 0.9090909090909091,
     "support": 12.0
   },
   "Lickitung": {
@@ -426,21 +426,21 @@
     "support": 11.0
   },
   "Machamp": {
-    "precision": 0.7857142857142857,
-    "recall": 0.9166666666666666,
-    "f1-score": 0.8461538461538461,
+    "precision": 0.9230769230769231,
+    "recall": 1.0,
+    "f1-score": 0.96,
     "support": 12.0
   },
   "Machoke": {
-    "precision": 0.875,
-    "recall": 0.7777777777777778,
-    "f1-score": 0.8235294117647058,
+    "precision": 1.0,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.9411764705882353,
     "support": 9.0
   },
   "Machop": {
-    "precision": 0.9,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9473684210526315,
+    "f1-score": 1.0,
     "support": 9.0
   },
   "Magikarp": {
@@ -450,33 +450,33 @@
     "support": 10.0
   },
   "Magmar": {
-    "precision": 1.0,
+    "precision": 0.9090909090909091,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Magnemite": {
-    "precision": 1.0,
-    "recall": 0.9,
-    "f1-score": 0.9473684210526315,
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1-score": 0.9523809523809523,
     "support": 10.0
   },
   "Magneton": {
-    "precision": 0.9,
-    "recall": 1.0,
-    "f1-score": 0.9473684210526315,
+    "precision": 1.0,
+    "recall": 0.8888888888888888,
+    "f1-score": 0.9411764705882353,
     "support": 9.0
   },
   "Mankey": {
-    "precision": 0.7333333333333333,
-    "recall": 0.9166666666666666,
-    "f1-score": 0.8148148148148148,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
     "support": 12.0
   },
   "Marowak": {
-    "precision": 1.0,
-    "recall": 0.5714285714285714,
-    "f1-score": 0.7272727272727273,
+    "precision": 0.7142857142857143,
+    "recall": 0.7142857142857143,
+    "f1-score": 0.7142857142857143,
     "support": 7.0
   },
   "Meowth": {
@@ -486,27 +486,27 @@
     "support": 6.0
   },
   "Metapod": {
-    "precision": 0.9230769230769231,
-    "recall": 1.0,
-    "f1-score": 0.96,
+    "precision": 1.0,
+    "recall": 0.8333333333333334,
+    "f1-score": 0.9090909090909091,
     "support": 12.0
   },
   "Mew": {
-    "precision": 0.9166666666666666,
+    "precision": 1.0,
     "recall": 0.9166666666666666,
-    "f1-score": 0.9166666666666666,
+    "f1-score": 0.9565217391304348,
     "support": 12.0
   },
   "Mewtwo": {
-    "precision": 0.9090909090909091,
-    "recall": 0.9090909090909091,
-    "f1-score": 0.9090909090909091,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
     "support": 11.0
   },
   "Moltres": {
-    "precision": 1.0,
+    "precision": 0.8888888888888888,
     "recall": 0.8888888888888888,
-    "f1-score": 0.9411764705882353,
+    "f1-score": 0.8888888888888888,
     "support": 9.0
   },
   "MrMime": {
@@ -516,15 +516,15 @@
     "support": 10.0
   },
   "Muk": {
-    "precision": 0.9,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9473684210526315,
+    "f1-score": 1.0,
     "support": 9.0
   },
   "Nidoking": {
     "precision": 1.0,
-    "recall": 0.9090909090909091,
-    "f1-score": 0.9523809523809523,
+    "recall": 1.0,
+    "f1-score": 1.0,
     "support": 11.0
   },
   "Nidoqueen": {
@@ -534,45 +534,45 @@
     "support": 11.0
   },
   "Nidorina": {
-    "precision": 0.9,
-    "recall": 1.0,
-    "f1-score": 0.9473684210526315,
-    "support": 9.0
-  },
-  "Nidorino": {
-    "precision": 0.8461538461538461,
-    "recall": 1.0,
-    "f1-score": 0.9166666666666666,
-    "support": 11.0
-  },
-  "Ninetales": {
-    "precision": 1.0,
-    "recall": 0.8,
-    "f1-score": 0.8888888888888888,
-    "support": 10.0
-  },
-  "Oddish": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 11.0
-  },
-  "Omanyte": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 10.0
-  },
-  "Omastar": {
     "precision": 1.0,
     "recall": 0.8888888888888888,
     "f1-score": 0.9411764705882353,
     "support": 9.0
   },
-  "Onix": {
-    "precision": 0.7,
+  "Nidorino": {
+    "precision": 0.9166666666666666,
+    "recall": 1.0,
+    "f1-score": 0.9565217391304348,
+    "support": 11.0
+  },
+  "Ninetales": {
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1-score": 1.0,
+    "support": 10.0
+  },
+  "Oddish": {
+    "precision": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
+    "support": 11.0
+  },
+  "Omanyte": {
+    "precision": 0.9090909090909091,
+    "recall": 1.0,
+    "f1-score": 0.9523809523809523,
+    "support": 10.0
+  },
+  "Omastar": {
+    "precision": 1.0,
     "recall": 0.7777777777777778,
-    "f1-score": 0.7368421052631579,
+    "f1-score": 0.875,
+    "support": 9.0
+  },
+  "Onix": {
+    "precision": 1.0,
+    "recall": 0.7777777777777778,
+    "f1-score": 0.875,
     "support": 9.0
   },
   "Paras": {
@@ -588,27 +588,27 @@
     "support": 9.0
   },
   "Persian": {
-    "precision": 1.0,
+    "precision": 0.8888888888888888,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9411764705882353,
     "support": 8.0
   },
   "Pidgeot": {
-    "precision": 0.8,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.8421052631578947,
+    "precision": 0.7777777777777778,
+    "recall": 0.7777777777777778,
+    "f1-score": 0.7777777777777778,
     "support": 9.0
   },
   "Pidgeotto": {
-    "precision": 1.0,
-    "recall": 0.7777777777777778,
-    "f1-score": 0.875,
+    "precision": 0.75,
+    "recall": 0.6666666666666666,
+    "f1-score": 0.7058823529411765,
     "support": 9.0
   },
   "Pidgey": {
-    "precision": 0.9166666666666666,
-    "recall": 1.0,
-    "f1-score": 0.9565217391304348,
+    "precision": 1.0,
+    "recall": 0.7272727272727273,
+    "f1-score": 0.8421052631578947,
     "support": 11.0
   },
   "Pikachu": {
@@ -624,39 +624,39 @@
     "support": 9.0
   },
   "Poliwag": {
-    "precision": 0.9166666666666666,
-    "recall": 1.0,
-    "f1-score": 0.9565217391304348,
-    "support": 11.0
-  },
-  "Poliwhirl": {
     "precision": 1.0,
     "recall": 0.9090909090909091,
     "f1-score": 0.9523809523809523,
     "support": 11.0
   },
+  "Poliwhirl": {
+    "precision": 1.0,
+    "recall": 0.7272727272727273,
+    "f1-score": 0.8421052631578947,
+    "support": 11.0
+  },
   "Poliwrath": {
-    "precision": 0.875,
-    "recall": 1.0,
-    "f1-score": 0.9333333333333333,
+    "precision": 0.6666666666666666,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.75,
     "support": 7.0
   },
   "Ponyta": {
+    "precision": 1.0,
+    "recall": 0.8,
+    "f1-score": 0.8888888888888888,
+    "support": 10.0
+  },
+  "Porygon": {
     "precision": 0.9090909090909091,
     "recall": 1.0,
     "f1-score": 0.9523809523809523,
     "support": 10.0
   },
-  "Porygon": {
+  "Primeape": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
-    "support": 10.0
-  },
-  "Primeape": {
-    "precision": 1.0,
-    "recall": 0.6363636363636364,
-    "f1-score": 0.7777777777777778,
     "support": 11.0
   },
   "Psyduck": {
@@ -666,15 +666,15 @@
     "support": 9.0
   },
   "Raichu": {
-    "precision": 1.0,
-    "recall": 0.9090909090909091,
-    "f1-score": 0.9523809523809523,
-    "support": 11.0
-  },
-  "Rapidash": {
     "precision": 0.9090909090909091,
     "recall": 0.9090909090909091,
     "f1-score": 0.9090909090909091,
+    "support": 11.0
+  },
+  "Rapidash": {
+    "precision": 0.8333333333333334,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.8695652173913043,
     "support": 11.0
   },
   "Raticate": {
@@ -696,15 +696,15 @@
     "support": 11.0
   },
   "Rhyhorn": {
-    "precision": 1.0,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.9411764705882353,
+    "precision": 0.6923076923076923,
+    "recall": 1.0,
+    "f1-score": 0.8181818181818182,
     "support": 9.0
   },
   "Sandshrew": {
-    "precision": 0.9090909090909091,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9523809523809523,
+    "f1-score": 1.0,
     "support": 10.0
   },
   "Sandslash": {
@@ -714,15 +714,15 @@
     "support": 10.0
   },
   "Scyther": {
-    "precision": 0.9166666666666666,
-    "recall": 0.9166666666666666,
-    "f1-score": 0.9166666666666666,
+    "precision": 0.9230769230769231,
+    "recall": 1.0,
+    "f1-score": 0.96,
     "support": 12.0
   },
   "Seadra": {
-    "precision": 1.0,
+    "precision": 0.8181818181818182,
     "recall": 0.8181818181818182,
-    "f1-score": 0.9,
+    "f1-score": 0.8181818181818182,
     "support": 11.0
   },
   "Seaking": {
@@ -732,9 +732,9 @@
     "support": 10.0
   },
   "Seel": {
-    "precision": 0.9166666666666666,
+    "precision": 0.8461538461538461,
     "recall": 1.0,
-    "f1-score": 0.9565217391304348,
+    "f1-score": 0.9166666666666666,
     "support": 11.0
   },
   "Shellder": {
@@ -744,27 +744,27 @@
     "support": 10.0
   },
   "Slowbro": {
-    "precision": 0.8888888888888888,
-    "recall": 0.8,
-    "f1-score": 0.8421052631578947,
+    "precision": 1.0,
+    "recall": 0.9,
+    "f1-score": 0.9473684210526315,
     "support": 10.0
   },
   "Slowpoke": {
-    "precision": 0.7777777777777778,
-    "recall": 0.7777777777777778,
-    "f1-score": 0.7777777777777778,
+    "precision": 0.9,
+    "recall": 1.0,
+    "f1-score": 0.9473684210526315,
     "support": 9.0
   },
   "Snorlax": {
-    "precision": 0.9285714285714286,
-    "recall": 1.0,
-    "f1-score": 0.9629629629629629,
+    "precision": 0.9166666666666666,
+    "recall": 0.8461538461538461,
+    "f1-score": 0.88,
     "support": 13.0
   },
   "Spearow": {
-    "precision": 0.9166666666666666,
-    "recall": 0.9166666666666666,
-    "f1-score": 0.9166666666666666,
+    "precision": 0.9230769230769231,
+    "recall": 1.0,
+    "f1-score": 0.96,
     "support": 12.0
   },
   "Squirtle": {
@@ -774,9 +774,9 @@
     "support": 11.0
   },
   "Starmie": {
-    "precision": 0.9166666666666666,
+    "precision": 1.0,
     "recall": 1.0,
-    "f1-score": 0.9565217391304348,
+    "f1-score": 1.0,
     "support": 11.0
   },
   "Staryu": {
@@ -786,51 +786,51 @@
     "support": 10.0
   },
   "Tangela": {
-    "precision": 1.0,
+    "precision": 0.9230769230769231,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.96,
     "support": 12.0
   },
   "Tauros": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9166666666666666,
+    "f1-score": 0.9565217391304348,
     "support": 12.0
   },
   "Tentacool": {
+    "precision": 0.8333333333333334,
+    "recall": 1.0,
+    "f1-score": 0.9090909090909091,
+    "support": 10.0
+  },
+  "Tentacruel": {
     "precision": 1.0,
     "recall": 0.9,
     "f1-score": 0.9473684210526315,
     "support": 10.0
   },
-  "Tentacruel": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 10.0
-  },
   "Vaporeon": {
-    "precision": 1.0,
+    "precision": 0.8666666666666667,
     "recall": 1.0,
-    "f1-score": 1.0,
+    "f1-score": 0.9285714285714286,
     "support": 13.0
   },
   "Venomoth": {
-    "precision": 1.0,
-    "recall": 0.9090909090909091,
-    "f1-score": 0.9523809523809523,
+    "precision": 0.8888888888888888,
+    "recall": 0.7272727272727273,
+    "f1-score": 0.8,
     "support": 11.0
   },
   "Venonat": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9,
+    "f1-score": 0.9473684210526315,
     "support": 10.0
   },
   "Venusaur": {
-    "precision": 0.9285714285714286,
-    "recall": 0.9285714285714286,
-    "f1-score": 0.9285714285714286,
+    "precision": 0.9230769230769231,
+    "recall": 0.8571428571428571,
+    "f1-score": 0.8888888888888888,
     "support": 14.0
   },
   "Victreebel": {
@@ -840,9 +840,9 @@
     "support": 11.0
   },
   "Vileplume": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "precision": 0.9166666666666666,
+    "recall": 0.9166666666666666,
+    "f1-score": 0.9166666666666666,
     "support": 12.0
   },
   "Voltorb": {
@@ -853,44 +853,44 @@
   },
   "Vulpix": {
     "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9523809523809523,
     "support": 11.0
   },
   "Wartortle": {
+    "precision": 0.9090909090909091,
+    "recall": 0.9090909090909091,
+    "f1-score": 0.9090909090909091,
+    "support": 11.0
+  },
+  "Weedle": {
     "precision": 1.0,
     "recall": 0.9090909090909091,
     "f1-score": 0.9523809523809523,
     "support": 11.0
   },
-  "Weedle": {
+  "Weepinbell": {
     "precision": 1.0,
     "recall": 1.0,
     "f1-score": 1.0,
-    "support": 11.0
-  },
-  "Weepinbell": {
-    "precision": 1.0,
-    "recall": 0.8888888888888888,
-    "f1-score": 0.9411764705882353,
     "support": 9.0
   },
   "Weezing": {
-    "precision": 1.0,
-    "recall": 1.0,
-    "f1-score": 1.0,
-    "support": 11.0
-  },
-  "Wigglytuff": {
-    "precision": 0.9230769230769231,
-    "recall": 1.0,
-    "f1-score": 0.96,
-    "support": 12.0
-  },
-  "Zapdos": {
     "precision": 0.9166666666666666,
     "recall": 1.0,
     "f1-score": 0.9565217391304348,
+    "support": 11.0
+  },
+  "Wigglytuff": {
+    "precision": 0.8461538461538461,
+    "recall": 0.9166666666666666,
+    "f1-score": 0.88,
+    "support": 12.0
+  },
+  "Zapdos": {
+    "precision": 0.6875,
+    "recall": 1.0,
+    "f1-score": 0.8148148148148148,
     "support": 11.0
   },
   "Zubat": {
@@ -899,17 +899,17 @@
     "f1-score": 0.9411764705882353,
     "support": 9.0
   },
-  "accuracy": 0.9566955363091273,
+  "accuracy": 0.9407061958694204,
   "macro avg": {
-    "precision": 0.9604188404188403,
-    "recall": 0.9549107744107743,
-    "f1-score": 0.9552546373553995,
+    "precision": 0.9471389443889444,
+    "recall": 0.9403298183298183,
+    "f1-score": 0.9401589223622735,
     "support": 1501.0
   },
   "weighted avg": {
-    "precision": 0.9603002039044678,
-    "recall": 0.9566955363091273,
-    "f1-score": 0.9562605208856606,
+    "precision": 0.9475768355931581,
+    "recall": 0.9407061958694204,
+    "f1-score": 0.9406671126863108,
     "support": 1501.0
   }
 }

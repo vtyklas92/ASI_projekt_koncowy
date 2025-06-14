@@ -58,6 +58,9 @@ tools = "['Linting', 'Testing', 'Custom Logging', 'Documentation', 'Data Structu
 example_pipeline = "False"
 source_dir = "src"
 
+[tool.kedro_telemetry]
+project_id = "ff9aff4981e247948bd2f047397bf846"
+
 [tool.pytest.ini_options]
 addopts = """
 --cov-report term-missing \
@@ -68,22 +71,25 @@ fail_under = 0
 show_missing = true
 exclude_lines = ["pragma: no cover", "raise NotImplementedError"]
 
-[tool.ruff.format]
-docstring-code-format = true
+# --- POPRAWIONY I POŁĄCZONY BLOK KONFIGURACJI NARZĘDZI ---
+
+[tool.black]
+line-length = 88
+target-version = ['py38']
 
 [tool.ruff]
 line-length = 88
-show-fixes = true
-select = [
-    "F",   # Pyflakes
-    "W",   # pycodestyle
-    "E",   # pycodestyle
-    "I",   # isort
-    "UP",  # pyupgrade
-    "PL",  # Pylint
-    "T201", # Print Statement
-]
-ignore = ["E501"]  # Ruff format takes care of line-too-long
 
-[tool.kedro_telemetry]
-project_id = "ff9aff4981e247948bd2f047397bf846"
+[tool.ruff.format]
+docstring-code-format = true
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP"]
+
+[tool.mypy]
+# Pamiętaj, że ta metoda może nie działać w pre-commit.
+# Najpewniejszym sposobem na ignorowanie błędów mypy jest
+# dodanie komentarzy # type: ignore[...] w pliku .py
+exclude = [
+    'asi-project/docs/source/conf.py',
+]

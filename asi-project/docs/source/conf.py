@@ -19,8 +19,8 @@
 #
 import re
 
-from kedro.framework.cli.utils import find_stylesheets
 from asi_project import __version__ as release
+from kedro.framework.cli.utils import find_stylesheets
 
 # -- Project information -----------------------------------------------------
 
@@ -28,7 +28,7 @@ project = "asi_project"
 author = "Kedro"
 
 # The short X.Y version.
-version = re.match(r"^([0-9]+\.[0-9]+).*", release).group(1)
+version = re.match(r"^([0-9]+\.[0-9]+).*", release).group(1)  # type: ignore[union-attr]
 
 # -- General configuration ---------------------------------------------------
 
@@ -124,7 +124,7 @@ htmlhelp_basename = "asi_projectdoc"
 
 # -- Options for LaTeX output ------------------------------------------------
 
-latex_elements = {
+latex_elements = {  # type: ignore[var-annotated]
     # The paper size ('letterpaper' or 'a4paper').
     #
     # 'papersize': 'letterpaper',
