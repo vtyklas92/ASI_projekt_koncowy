@@ -1,6 +1,6 @@
 outs:
-- md5: ef05647ae4d479e416e407233896b2d9.dir
-  size: 142958370
-  nfiles: 22
+- md5: 45b46dace6978bcd67bd6a7c68e48ac1.dir
+  size: 161392033
+  nfiles: 30
   hash: md5
   path: AutogluonModels
