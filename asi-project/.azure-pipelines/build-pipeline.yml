@@ -7,12 +7,12 @@ pool:
   vmImage: 'ubuntu-latest'
 
 variables:
-  dockerRegistryServiceConnection: 'PokedexACRConnection'
-  containerRegistry: 'pokedexrejestr.azurecr.io'
+  dockerRegistryServiceConnection: 'pokedex-asi-acr'
+  containerRegistry: 'pokedexasi.azurecr.io'
   imageName: 'pokedex-app'
-  resourceGroup: 'suml'
-  containerName: 'pokedex-app-container'
-  dnsNameLabel: 'pokedex-app-suml-pw-kk'
+  resourceGroup: 'asi'
+  containerName: 'pokedex-container-asi'
+  dnsNameLabel: 'pokedex-app-suml-pw-kk-ap'
 
 stages:
   - stage: BuildAndPush
