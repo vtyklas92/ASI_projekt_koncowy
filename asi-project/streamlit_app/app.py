@@ -163,4 +163,4 @@ if st.session_state.predicted and st.session_state.done:
         st.query_params.clear()
 
 st.divider()
-st.caption("PokedexAI– wspierany przez AutoGluon i PokéAPI.")
+st.caption("PokedexAI – wspierany przez AutoGluon i PokéAPI.")
