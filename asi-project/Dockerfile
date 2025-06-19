@@ -20,7 +20,7 @@ COPY --from=builder /app/requirements.txt .
 
 # Kopiujemy całą aplikację, w tym modele i kod źródłowy
 COPY streamlit_app/app.py ./streamlit_app/app.py
-COPY AutogluonModels ./AutogluonModels
+COPY AutogluonModels ASI_projekt_koncowy/asi-project/AutogluonModels
 COPY src ./src
 COPY conf ./conf
 # Jeśli masz assets, odkomentuj poniżej:
