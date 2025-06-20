@@ -2,7 +2,7 @@ name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
   push:
-    branches: [ azure_test ]
+    branches: [ main ]
   workflow_dispatch:
 
 env:
@@ -23,12 +23,10 @@ jobs:
       uses: actions/checkout@v4
       with:
         lfs: true
-
     - name: '2. Konfiguracja środowiska Python'
       uses: actions/setup-python@v5
       with:
         python-version: '3.11'
-
     - name: '3. Zainstaluj DVC i pobierz dane modeli'
       env:
         DVC_JSON_CREDS: ${{ secrets.DVC_CREDENTIALS_JSON }}
@@ -38,23 +36,19 @@ jobs:
         dvc remote modify mygdrive gdrive_use_service_account true --local
         dvc remote modify mygdrive gdrive_service_account_json_file_path dvc_credentials.json --local
         dvc pull asi-project/AutogluonModels.dvc --force
-
     - name: '4. Zaloguj się do Azure'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - name: '5. Zaloguj się do Azure Container Registry (ACR)'
       run: |
         az acr login --name $ACR_LOGIN_SERVER
-
     - name: '6. Znajdź najnowszy folder z modelem'
       id: find_model
       run: |
         LATEST_MODEL=$(ls -1 asi-project/AutogluonModels | sort -r | head -n 1)
         echo "Znaleziono najnowszy model do spakowania: $LATEST_MODEL"
         echo "LATEST_MODEL_DIR=$LATEST_MODEL" >> $GITHUB_ENV
-
     - name: '7. Zbuduj i wypchnij zoptymalizowany obraz Docker'
       run: |
         docker build \
@@ -68,7 +62,6 @@ jobs:
   # --- ZADANIE 2: WDRAŻANIE OBRAZU ---
   deploy:
     name: Wdróż Obraz na Azure
-    # Ten warunek sprawia, że zadanie 'deploy' uruchomi się tylko po sukcesie zadania 'build'
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -76,7 +69,6 @@ jobs:
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
-
     - name: '2. Włącz konto admina i pobierz dane logowania do ACR'
       id: acr_creds
       run: |
@@ -85,7 +77,6 @@ jobs:
         ACR_PASSWORD=$(az acr credential show --name $ACR_LOGIN_SERVER --query "passwords[0].value" -o tsv)
         echo "ACR_USER=$ACR_USERNAME" >> $GITHUB_ENV
         echo "ACR_PASS=$ACR_PASSWORD" >> $GITHUB_ENV
-
     - name: '3. Wdróż najnowszy obraz na Azure Container Instances (ACI)'
       run: |
         az container delete --name $ACI_CONTAINER_NAME --resource-group $RESOURCE_GROUP --yes || true
@@ -94,6 +85,7 @@ jobs:
           --name $ACI_CONTAINER_NAME \
           --image $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }} \
           --dns-name-label $ACI_DNS_NAME_LABEL \
+          --os-type Linux \
           --ports 8501 \
           --cpu 1 \
           --memory 1.5 \
