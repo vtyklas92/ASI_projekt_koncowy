@@ -2,7 +2,7 @@ name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
   push:
-    branches: [ azure_test ] # Zmieniono z powrotem na 'main' - zmień, jeśli używasz innego głównego brancha
+    branches: [ azure_test ] # Upewnij się, że to jest Twój główny branch
   workflow_dispatch:
 
 env:
@@ -20,7 +20,6 @@ jobs:
     - name: '1. Pobierz kod (Checkout)'
       uses: actions/checkout@v4
       with:
-        # Upewniamy się, że pliki śledzone przez LFS (jeśli istnieją) są pobierane
         lfs: true
 
     - name: '2. Konfiguracja środowiska Python'
@@ -28,21 +27,26 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: '3. Zainstaluj DVC i pobierz dane modeli'
+    # --- NOWY, W PEŁNI ZAUTOMATYZOWANY KROK DLA DVC ---
+    # Ten krok zastępuje Twój skrypt setup_dvc.py
+    - name: '3. Zainstaluj DVC, skonfiguruj i pobierz dane'
       env:
         # Bezpiecznie przekazujemy zawartość pliku .json z sekretów
         DVC_JSON_CREDS: ${{ secrets.DVC_CREDENTIALS_JSON }}
       run: |
-        # Krok 1: Zainstaluj DVC z obsługą Twojej chmury (np. Google Cloud Storage)
+        # Krok A: Zainstaluj DVC z obsługą Google Drive
         pip install "dvc[gdrive]"
-
-        # Krok 2: Odtwórz plik z danymi logowania na maszynie budującej
+        
+        # Krok B: Odtwórz plik credentials.json na maszynie budującej
         echo "$DVC_JSON_CREDS" > dvc_credentials.json
         
-        # Krok 3: Ustaw zmienną środowiskową wskazującą na ten plik
-        export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/dvc_credentials.json
+        # Krok C: Uruchom komendy konfiguracyjne - DOKŁADNIE tak, jak w Twoim skrypcie
+        echo "Konfigurowanie DVC dla Google Drive z użyciem konta usługi..."
+        dvc remote modify mygdrive gdrive_use_service_account true --local
+        dvc remote modify mygdrive gdrive_service_account_json_file_path dvc_credentials.json --local
         
-        # Krok 4: Pobierz tylko dane modeli w wersji z najnowszego commita
+        # Krok D: Pobierz dane modeli w wersji z najnowszego commita
+        echo "Pobieranie danych modeli..."
         dvc pull asi-project/AutogluonModels.dvc --force
 
     - name: '4. Zaloguj się do Azure'
@@ -57,30 +61,22 @@ jobs:
     - name: '6. Znajdź najnowszy folder z modelem'
       id: find_model
       run: |
-        # Skrypt przegląda pobrane foldery modeli i wybiera najnowszy na podstawie nazwy
         LATEST_MODEL=$(ls -1 asi-project/AutogluonModels | sort -r | head -n 1)
         echo "Znaleziono najnowszy model do spakowania: $LATEST_MODEL"
         echo "LATEST_MODEL_DIR=$LATEST_MODEL" >> $GITHUB_ENV
 
     - name: '7. Zbuduj i wypchnij zoptymalizowany obraz Docker'
       run: |
-        # Budujemy obraz, przekazując nazwę najnowszego modelu jako argument
-        # Dzięki temu do obrazu trafi tylko jeden, wybrany model
         docker build \
           --build-arg LATEST_MODEL_DIR=${{ env.LATEST_MODEL_DIR }} \
           -f asi-project/Dockerfile \
           -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }} \
           .
-        
-        # Wypychamy gotowy obraz do naszego rejestru w Azure
         docker push $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }}
-
+        
     - name: '8. Wdróż najnowszy obraz na Azure Container Instances (ACI)'
       run: |
-        # Krok A: Usuń poprzednią wersję kontenera, aby zrobić miejsce na nową
         az container delete --name $ACI_CONTAINER_NAME --resource-group $RESOURCE_GROUP --yes || true
-
-        # Krok B: Stwórz nowy kontener z najnowszym obrazem z naszego rejestru
         az container create \
           --resource-group $RESOURCE_GROUP \
           --name $ACI_CONTAINER_NAME \
