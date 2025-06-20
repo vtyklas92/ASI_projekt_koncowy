@@ -2,11 +2,11 @@ name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
   push:
-    branches: [ azure_test ] # Upewnij się, że to jest Twój główny branch
+    branches: [ azure_test ]
   workflow_dispatch:
 
 env:
-  # Sekrety i nazwy zdefiniowane w GitHub i Azure
+  # Wspólne zmienne dla obu zadań
   RESOURCE_GROUP: ${{ secrets.RESOURCE_GROUP_NAME }}
   ACR_LOGIN_SERVER: ${{ secrets.ACR_LOGIN_SERVER }}
   ACR_REPOSITORY_NAME: ${{ secrets.ACR_REPOSITORY_NAME }}
@@ -14,7 +14,9 @@ env:
   ACI_DNS_NAME_LABEL: ${{ secrets.ACI_DNS_NAME_LABEL }}
 
 jobs:
-  build-and-deploy:
+  # --- ZADANIE 1: BUDOWANIE OBRAZU ---
+  build:
+    name: Zbuduj i Wypchnij Obraz Docker
     runs-on: ubuntu-latest
     steps:
     - name: '1. Pobierz kod (Checkout)'
@@ -27,26 +29,14 @@ jobs:
       with:
         python-version: '3.11'
 
-    # --- NOWY, W PEŁNI ZAUTOMATYZOWANY KROK DLA DVC ---
-    # Ten krok zastępuje Twój skrypt setup_dvc.py
-    - name: '3. Zainstaluj DVC, skonfiguruj i pobierz dane'
+    - name: '3. Zainstaluj DVC i pobierz dane modeli'
       env:
-        # Bezpiecznie przekazujemy zawartość pliku .json z sekretów
         DVC_JSON_CREDS: ${{ secrets.DVC_CREDENTIALS_JSON }}
       run: |
-        # Krok A: Zainstaluj DVC z obsługą Google Drive
         pip install "dvc[gdrive]"
-        
-        # Krok B: Odtwórz plik credentials.json na maszynie budującej
         echo "$DVC_JSON_CREDS" > dvc_credentials.json
-        
-        # Krok C: Uruchom komendy konfiguracyjne - DOKŁADNIE tak, jak w Twoim skrypcie
-        echo "Konfigurowanie DVC dla Google Drive z użyciem konta usługi..."
         dvc remote modify mygdrive gdrive_use_service_account true --local
         dvc remote modify mygdrive gdrive_service_account_json_file_path dvc_credentials.json --local
-        
-        # Krok D: Pobierz dane modeli w wersji z najnowszego commita
-        echo "Pobieranie danych modeli..."
         dvc pull asi-project/AutogluonModels.dvc --force
 
     - name: '4. Zaloguj się do Azure'
@@ -71,10 +61,32 @@ jobs:
           --build-arg LATEST_MODEL_DIR=${{ env.LATEST_MODEL_DIR }} \
           -f asi-project/Dockerfile \
           -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }} \
+          -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:latest \
           .
-        docker push $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }}
-        
-    - name: '8. Wdróż najnowszy obraz na Azure Container Instances (ACI)'
+        docker push --all-tags $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME
+
+  # --- ZADANIE 2: WDRAŻANIE OBRAZU ---
+  deploy:
+    name: Wdróż Obraz na Azure
+    # Ten warunek sprawia, że zadanie 'deploy' uruchomi się tylko po sukcesie zadania 'build'
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - name: '1. Zaloguj się do Azure'
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: '2. Włącz konto admina i pobierz dane logowania do ACR'
+      id: acr_creds
+      run: |
+        az acr update -n $ACR_LOGIN_SERVER --admin-enabled true
+        ACR_USERNAME=$(az acr credential show --name $ACR_LOGIN_SERVER --query "username" -o tsv)
+        ACR_PASSWORD=$(az acr credential show --name $ACR_LOGIN_SERVER --query "passwords[0].value" -o tsv)
+        echo "ACR_USER=$ACR_USERNAME" >> $GITHUB_ENV
+        echo "ACR_PASS=$ACR_PASSWORD" >> $GITHUB_ENV
+
+    - name: '3. Wdróż najnowszy obraz na Azure Container Instances (ACI)'
       run: |
         az container delete --name $ACI_CONTAINER_NAME --resource-group $RESOURCE_GROUP --yes || true
         az container create \
@@ -84,4 +96,6 @@ jobs:
           --dns-name-label $ACI_DNS_NAME_LABEL \
           --ports 8501 \
           --cpu 1 \
-          --memory 1.5
+          --memory 1.5 \
+          --registry-username "${{ env.ACR_USER }}" \
+          --registry-password "${{ env.ACR_PASS }}"
