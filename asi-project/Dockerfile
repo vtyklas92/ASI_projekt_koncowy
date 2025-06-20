@@ -22,7 +22,7 @@ COPY --from=builder /app/requirements.txt .
 COPY streamlit_app/app.py ./streamlit_app/app.py
 COPY AutogluonModels ./AutogluonModels
 COPY src ./src
-COPY conf ./conf
+COPY conf ./asi-project/conf
 # Jeśli masz assets, odkomentuj poniżej:
 # COPY assets ./assets/
 
