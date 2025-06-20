@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <title>Dokumentacja – Moduły Data Engineering i Data Science</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1, h2, h3 { color: #2d4a7a; }
+        pre, code { background: #f4f4f4; border-radius: 4px; padding: 8px; font-size: 14px; }
+        table { border-collapse: collapse; margin: 16px 0; }
+        th, td { border: 1px solid #aaa; padding: 6px 12px; }
+    </style>
+</head>
+<body>
+<h1>Dokumentacja – Moduły Data Engineering i Data Science</h1>
+
+<h2>1. Moduł: <code>pipelines/data_engineering/</code></h2>
+
+<h3>Opis ogólny</h3>
+<p>Moduł odpowiedzialny za przygotowanie danych do dalszych etapów analizy i modelowania. W szczególności:
+<ul>
+<li>Skanuje katalog z surowymi danymi (np. obrazami Pokémonów).</li>
+<li>Tworzy ramkę danych z etykietami i ścieżkami do plików.</li>
+<li>Dzieli dane na zbiory treningowe i testowe z zachowaniem proporcji klas (stratyfikacja).</li>
+</ul></p>
+
+<h3>Funkcja: <code>create_pokemon_dataframe</code></h3>
+<p><b>Opis:</b><br>
+Skanuje katalog z surowymi danymi, gdzie każdy podfolder reprezentuje jedną klasę (np. nazwę Pokémona). Zbiera ścieżki do plików graficznych oraz odpowiadające im etykiety (nazwy podfolderów). Tworzy ramkę danych (DataFrame) z dwiema kolumnami: <code>image</code> (pełna ścieżka do pliku) oraz <code>label</code> (klasa).</p>
+<pre><code>def create_pokemon_dataframe(parameters: dict[str, Any]) -> pd.DataFrame:
+    raw_data_path = parameters["raw_data_path"]
+    if not os.path.isdir(raw_data_path):
+        raise FileNotFoundError(
+            f"Katalog z danymi nie został znaleziony: {raw_data_path}"
+        )
+
+    image_paths = []
+    labels = []
+    class_names = sorted(
+        [
+            d
+            for d in os.listdir(raw_data_path)
+            if os.path.isdir(os.path.join(raw_data_path, d))
+        ]
+    )
+
+    for class_name in class_names:
+        class_dir = os.path.join(raw_data_path, class_name)
+        for image_name in os.listdir(class_dir):
+            if image_name.lower().endswith((".png", ".jpg", ".jpeg")):
+                image_paths.append(os.path.abspath(os.path.join(class_dir, image_name)))
+                labels.append(class_name)
+
+    df = pd.DataFrame({"image": image_paths, "label": labels})
+    print(f"Stworzono DataFrame z {len(df)} obrazami.")
+    return df
+</code></pre>
+
+<p><b>Przykład użycia:</b></p>
+<pre><code># Struktura katalogu:
+# raw/
+#   pikachu/
+#     1.png
+#     2.png
+#   bulbasaur/
+#     1.png
+#     2.png
+
+df = create_pokemon_dataframe({"raw_data_path": "raw/"})
+print(df.head())
+</code></pre>
+
+<table>
+<tr><th>image</th><th>label</th></tr>
+<tr><td>/abs/path/raw/pikachu/1.png</td><td>pikachu</td></tr>
+<tr><td>/abs/path/raw/pikachu/2.png</td><td>pikachu</td></tr>
+<tr><td>/abs/path/raw/bulbasaur/1.png</td><td>bulbasaur</td></tr>
+<tr><td>/abs/path/raw/bulbasaur/2.png</td><td>bulbasaur</td></tr>
+</table>
+
+<h3>Funkcja: <code>split_data</code></h3>
+<p><b>Opis:</b><br>
+Dzieli dane na zbiory treningowe i testowe z zachowaniem proporcji klas (stratyfikacja). Wykorzystuje parametry z plików konfiguracyjnych (<code>test_size</code>, <code>target_column</code>, <code>random_state</code>).</p>
+<pre><code>def split_data(
+    df: pd.DataFrame, parameters: dict[str, Any]
+) -> tuple[pd.DataFrame, pd.DataFrame]:
+    train_df, test_df = train_test_split(
+        df,
+        test_size=parameters["split"]["test_size"],
+        stratify=df[parameters["split"]["target_column"]],
+        random_state=parameters["split"]["random_state"],
+    )
+    print(
+        f"Podział danych zakończony. Zbiór treningowy: {len(train_df)},"
+        f"Zbiór testowy: {len(test_df)}"
+    )
+    return train_df, test_df
+</code></pre>
+
+<p><b>Przykład użycia:</b></p>
+<pre><code>train_df, test_df = split_data(df, {
+    "split": {"test_size": 0.2, "target_column": "label", "random_state": 42}
+})
+print(len(train_df), len(test_df))
+</code></pre>
+
+<hr>
+
+<h2>2. Moduł: <code>pipelines/data_science/</code></h2>
+
+<h3>Opis ogólny</h3>
+<p>Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowanych danych. Wykorzystuje bibliotekę AutoGluon do automatycznego trenowania modeli multimodalnych.</p>
+
+<h3>Funkcja: <code>train_model</code></h3>
+<p><b>Opis:</b><br>
+Trenuje model klasyfikacji obrazów przy użyciu <code>autogluon.multimodal.MultiModalPredictor</code>. Dane treningowe są zapisywane tymczasowo do pliku CSV, aby zapewnić kompatybilność z AutoGluon.</p>
+<pre><code>def train_model(
+    train_data: pd.DataFrame, parameters: dict[str, Any]
+) -> "MultiModalPredictor":
+    autogluon_params = parameters["autogluon"]
+    target_column = parameters["split"]["target_column"]
+
+    predictor = MultiModalPredictor(
+        label=target_column, eval_metric=autogluon_params["eval_metric"]
+    )
+
+    with tempfile.TemporaryDirectory() as temp_dir:
+        temp_train_csv_path = os.path.join(temp_dir, "train.csv")
+        train_data.to_csv(temp_train_csv_path, index=False)
+
+        print(f"Dane treningowe zapisane tymczasowo w: {temp_train_csv_path}")
+        print("Rozpoczynam trening AutoGluon...")
+
+        predictor.fit(
+            train_data=temp_train_csv_path,
+            time_limit=autogluon_params["time_limit"],
+            presets=autogluon_params["presets"],
+        )
+
+    print("Trening zakończony.")
+    return predictor
+</code></pre>
+
+<p><b>Przykład użycia:</b></p>
+<pre><code>parameters = {
+    "autogluon": {"time_limit": 3600, "presets": "best_quality", "eval_metric": "accuracy"},
+    "split": {"target_column": "label"}
+}
+predictor = train_model(train_df, parameters)
+</code></pre>
+
+<h3>Funkcja: <code>evaluate_model</code></h3>
+<p><b>Opis:</b><br>
+Ocenia jakość wytrenowanego modelu na zbiorze testowym. Generuje predykcje, raport klasyfikacji oraz wizualizację macierzy pomyłek.</p>
+<pre><code>def evaluate_model(
+    predictor: "MultiModalPredictor", test_data: pd.DataFrame
+) -> tuple[dict, plt.Figure]:
+    y_true = test_data["label"]
+    y_pred = predictor.predict(data=test_data)
+
+    report_dict = classification_report(
+        y_true, y_pred, output_dict=True, zero_division=0
+    )
+
+    actual_target_names = sorted(y_true.unique())
+    cm = confusion_matrix(y_true, y_pred, labels=actual_target_names)
+
+    fig, ax = plt.subplots(figsize=(20, 18))
+    sns.heatmap(
+        cm,
+        annot=True,
+        fmt="d",
+        cmap="Blues",
+        xticklabels=actual_target_names,
+        yticklabels=actual_target_names,
+        ax=ax,
+    )
+    plt.setp(ax.get_xticklabels(), rotation=45, ha="right", rotation_mode="anchor")
+    ax.set_xlabel("Predicted Class", fontsize=12)
+    ax.set_ylabel("True Class", fontsize=12)
+    ax.set_title("Confusion Matrix", fontsize=14)
+    fig.tight_layout()
+
+    return report_dict, fig
+</code></pre>
+
+<p><b>Przykład użycia:</b></p>
+<pre><code>report, fig = evaluate_model(predictor, test_df)
+print(report)
+fig.savefig("confusion_matrix.png")
+</code></pre>
+
+<hr>
+
+<h2>3. Przepływ danych w projekcie</h2>
+
+<ol>
+<li><b>Przygotowanie danych:</b><br>
+<code>create_pokemon_dataframe</code> → DataFrame z obrazami i etykietami.<br>
+<code>split_data</code> → podział na zbiory treningowe i testowe.
+</li>
+<li><b>Trenowanie modelu:</b><br>
+<code>train_model</code> na zbiorze treningowym.
+</li>
+<li><b>Ewaluacja:</b><br>
+<code>evaluate_model</code> na zbiorze testowym.
+</li>
+</ol>
+
+<h2>4. Przykładowy kod uruchamiający pipeline</h2>
+<pre><code># Przygotowanie danych
+df = create_pokemon_dataframe({"raw_data_path": "data/raw"})
+train_df, test_df = split_data(df, {"split": {"test_size": 0.2, "target_column": "label", "random_state": 42}})
+
+# Trening modelu
+parameters = {
+    "autogluon": {"time_limit": 3600, "presets": "best_quality", "eval_metric": "accuracy"},
+    "split": {"target_column": "label"}
+}
+predictor = train_model(train_df, parameters)
+
+# Ewaluacja
+report, fig = evaluate_model(predictor, test_df)
+fig.savefig("confusion_matrix.png")
+</code></pre>
+
+</body>
+</html> 

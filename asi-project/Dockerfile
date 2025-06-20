@@ -30,6 +30,8 @@
     COPY asi-project/src/ ./src/
     COPY asi-project/conf/ ./conf/
     COPY asi-project/AutogluonModels/${LATEST_MODEL_DIR} ./AutogluonModels/
+    RUN ls -l ./AutogluonModels/
+    RUN find ./AutogluonModels
     
     # ZMIANA: Używamy teraz bardziej niezawodnej metody instalacji.
     # --no-index mówi pip, aby nie łączył się z internetowym indeksem pakietów (PyPI).

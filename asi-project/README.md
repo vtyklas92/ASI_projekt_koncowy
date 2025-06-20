@@ -98,3 +98,54 @@ To automatically strip out all output cell contents before committing to `git`, 
 ## Package your Kedro project
 
 [Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/tutorial/package_a_project.html)
+
+## Pipeline Data Engineering
+
+Kod znajduje się w:
+`src/asi_project/pipelines/data_engineering/`
+
+Moduł odpowiedzialny za przygotowanie danych do dalszych etapów analizy i modelowania.
+
+### Główne funkcje:
+- **create_pokemon_dataframe**  
+  Skanuje katalog z surowymi danymi (np. obrazami Pokémonów), gdzie każdy podfolder reprezentuje jedną klasę (np. nazwę Pokémona). Funkcja:
+  - Przechodzi przez wszystkie podfoldery w katalogu surowych danych.
+  - Zbiera ścieżki do plików graficznych (.png, .jpg, .jpeg) oraz odpowiadające im etykiety (nazwy podfolderów).
+  - Tworzy ramkę danych (DataFrame) z dwiema kolumnami: `image` (pełna ścieżka do pliku) oraz `label` (klasa).
+  - Oczekuje parametru `raw_data_path` w pliku konfiguracyjnym.
+  - Zwraca DataFrame gotowy do dalszego przetwarzania.
+
+- **split_data**  
+  Dzieli dane na zbiory treningowe i testowe z zachowaniem proporcji klas (stratyfikacja). Funkcja:
+  - Przyjmuje DataFrame z obrazami i etykietami.
+  - Wykorzystuje parametry z plików konfiguracyjnych (`test_size`, `target_column`, `random_state`).
+  - Zapewnia, że rozkład klas w obu zbiorach jest taki sam jak w oryginalnych danych.
+  - Zwraca dwa DataFrame: zbiór treningowy i testowy.
+
+---
+
+## Pipeline Data Science
+
+Kod znajduje się w:
+`src/asi_project/pipelines/data_science/`
+
+Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowanych danych.
+
+### Główne funkcje:
+- **train_model**  
+  Trenuje model klasyfikacji obrazów przy użyciu `autogluon.multimodal.MultiModalPredictor`. Funkcja:
+  - Przyjmuje zbiór treningowy (DataFrame) oraz parametry treningu (np. `time_limit`, `presets`, `eval_metric`, `target_column`).
+  - Dane treningowe są zapisywane tymczasowo do pliku CSV, aby zapewnić kompatybilność z AutoGluon.
+  - Inicjalizuje i trenuje model klasyfikacyjny na podstawie przekazanych parametrów.
+  - Zwraca wytrenowany obiekt predyktora, gotowy do predykcji i ewaluacji.
+
+- **evaluate_model**  
+  Ocenia jakość wytrenowanego modelu na zbiorze testowym. Funkcja:
+  - Przyjmuje wytrenowany model oraz zbiór testowy (DataFrame).
+  - Generuje predykcje dla zbioru testowego.
+  - Tworzy szczegółowy raport klasyfikacji (precision, recall, f1-score dla każdej klasy).
+  - Generuje i wizualizuje macierz pomyłek (confusion matrix) jako wykres.
+  - Zwraca raport klasyfikacji oraz obiekt wykresu macierzy pomyłek.
+  - Raporty mogą być zapisywane do plików i wykorzystywane do dalszej analizy.
+
+---
