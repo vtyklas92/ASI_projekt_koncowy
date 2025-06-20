@@ -1,0 +1,60 @@
+name: Build and Push Docker Image with DVC + GHCR
+
+on:
+  push:
+    branches:
+      - main   # lub inna główna gałąź
+
+jobs:
+  build-push:
+    name: Build and Push Docker Image
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'  # lub inna wersja jakiej używasz
+
+    - name: Install DVC + deps
+      run: |
+        pip install dvc[gcs]  # lub [s3], zależnie od Twojego remote
+        pip install -r requirements.txt  # jeśli potrzebne
+
+    - name: Authenticate to GCS (DVC remote)
+      # Jeśli masz plik JSON jako secret
+      env:
+        GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+      run: |
+        echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/gcp_key.json
+        export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp_key.json
+
+    - name: Pull data and model from DVC
+      run: dvc pull
+
+    - name: Log in to GHCR
+      uses: docker/login-action@v3
+      with:
+        registry: ghcr.io
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Build Docker image
+      run: |
+        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/asi_app
+        docker build -t $IMAGE_NAME:${{ github.sha }} .
+
+    - name: Push Docker image (commit SHA tag)
+      run: |
+        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/asi_app
+        docker push $IMAGE_NAME:${{ github.sha }}
+
+    - name: (Optional) Tag and push latest for main
+      if: github.ref == 'refs/heads/main'
+      run: |
+        IMAGE_NAME=ghcr.io/${{ github.repository_owner }}/asi_app
+        docker tag $IMAGE_NAME:${{ github.sha }} $IMAGE_NAME:latest
+        docker push $IMAGE_NAME:latest
