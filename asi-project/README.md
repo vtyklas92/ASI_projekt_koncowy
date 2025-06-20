@@ -2,101 +2,139 @@
 
 [![Powered by Kedro](https://img.shields.io/badge/powered_by-kedro-ffc900?logo=kedro)](https://kedro.org)
 
-## Overview
+## Spis treści
+- [Wymagania wstępne](#wymagania-wstępne)
+- [Instalacja zależności](#instalacja-zależności)
+- [Konfiguracja DVC z Google Drive](#konfiguracja-dvc-z-google-drive)
+- [Pipeline Data Engineering](#pipeline-data-engineering)
+- [Pipeline Data Science](#pipeline-data-science)
+- [Uruchamianie pipeline'u](#uruchamianie-pipelineu)
+- [Przydatne polecenia](#przydatne-polecenia)
 
-This is your new Kedro project with PySpark setup, which was generated using `kedro 0.19.12`.
+---
 
-Take a look at the [Kedro documentation](https://docs.kedro.org) to get started.
+## Wymagania wstępne
 
-## Rules and guidelines
+- Python 3.11+
+- pip
+- git
+- dvc (z obsługą GDrive)
+- (opcjonalnie) Docker
 
-In order to get the best out of the template:
+---
 
-* Don't remove any lines from the `.gitignore` file we provide
-* Make sure your results can be reproduced by following a [data engineering convention](https://docs.kedro.org/en/stable/faq/faq.html#what-is-data-engineering-convention)
-* Don't commit data to your repository
-* Don't commit any credentials or your local configuration to your repository. Keep all your credentials and local configuration in `conf/local/`
+## Instalacja zależności
 
-## How to install dependencies
+1. **Sklonuj repozytorium:**
+   ```bash
+   git clone <adres_repo>
+   cd asi-project
+   ```
 
-Declare any dependencies in `requirements.txt` for `pip` installation.
+2. **Zainstaluj zależności:**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-To install them, run:
+3. **Zainstaluj DVC z obsługą GDrive:**
+   ```bash
+   pip install "dvc[gdrive]"
+   ```
 
-```
-pip install -r requirements.txt
-```
+---
 
-## How to run your Kedro pipeline:
+## Konfiguracja DVC z Google Drive
 
-You can run your Kedro project with:
+Aby pobrać dane (np. modele) z DVC przechowywane na Google Drive, użyj przygotowanego skryptu konfiguracyjnego.
 
-```
-kedro run
-```
+### Krok po kroku:
 
-## How to test your Kedro project
+1. **Otrzymaj plik klucza JSON**
+   - Plik z kluczem serwisowym (`dvc-gdrive-key.json`) zostanie dostarczony przez autorów projektu do sprawdzenia działania.
 
-Have a look at the files `src/tests/test_run.py` and `src/tests/pipelines/data_science/test_pipeline.py` for instructions on how to write your tests. Run the tests as follows:
+2. **Uruchom skrypt konfiguracyjny**
+   - W katalogu głównym projektu uruchom:
+     ```bash
+     python .dvc/setup_dvc.py /pełna/ścieżka/do/dvc-gdrive-key.json
+     ```
+   - Przykład:
+     ```bash
+     python .dvc/setup_dvc.py /home/user/dvc-gdrive-key.json
+     ```
+   - Skrypt automatycznie skonfiguruje DVC do korzystania z Google Drive przez ten klucz.
 
-```
-pytest
-```
+3. **Pobierz dane z DVC**
+   - Teraz możesz pobrać wymagane dane (np. modele) poleceniem:
+     ```bash
+     dvc pull AutogluonModels.dvc
+     ```
+   - Lub wszystkie dane DVC:
+     ```bash
+     dvc pull
+     ```
 
-To configure the coverage threshold, look at the `.coveragerc` file.
+**Uwaga:**
+Bez poprawnie skonfigurowanego DVC i klucza pobieranie danych nie będzie możliwe.
 
-## Project dependencies
+---
 
-To see and update the dependency requirements for your project use `requirements.txt`. Install the project requirements with `pip install -r requirements.txt`.
+## Pipeline Data Engineering
 
-[Further information about project dependencies](https://docs.kedro.org/en/stable/kedro_project_setup/dependencies.html#project-specific-dependencies)
+Kod znajduje się w:
+`src/asi_project/pipelines/data_engineering/`
 
-## How to work with Kedro and notebooks
+### Główne funkcje:
+- **create_pokemon_dataframe**  
+  Skanuje katalog z surowymi danymi (obrazy) i tworzy DataFrame z kolumnami `image` (ścieżka do pliku) i `label` (klasa). Oczekuje parametru `raw_data_path` w pliku konfiguracyjnym.
 
-> Note: Using `kedro jupyter` or `kedro ipython` to run your notebook provides these variables in scope: `catalog`, `context`, `pipelines` and `session`.
->
-> Jupyter, JupyterLab, and IPython are already included in the project requirements by default, so once you have run `pip install -r requirements.txt` you will not need to take any extra steps before you use them.
+- **split_data**  
+  Dzieli dane na zbiory treningowe i testowe z zachowaniem proporcji klas (stratyfikacja). Parametry podziału (np. `test_size`, `target_column`, `random_state`) są przekazywane przez config.
 
-### Jupyter
-To use Jupyter notebooks in your Kedro project, you need to install Jupyter:
+---
 
-```
-pip install jupyter
-```
+## Pipeline Data Science
 
-After installing Jupyter, you can start a local notebook server:
+Kod znajduje się w:
+`src/asi_project/pipelines/data_science/`
 
-```
-kedro jupyter notebook
-```
+### Główne funkcje:
+- **train_model**  
+  Trenuje model klasyfikacji obrazów przy użyciu `autogluon.multimodal.MultiModalPredictor`. Dane treningowe są zapisywane tymczasowo do pliku CSV, a następnie model jest trenowany na tym pliku. Parametry treningu (np. `time_limit`, `presets`, `eval_metric`, `target_column`) są przekazywane przez config.
 
-### JupyterLab
-To use JupyterLab, you need to install it:
+- **evaluate_model**  
+  Ocenia wytrenowany model na zbiorze testowym. Generuje raport klasyfikacji (`classification_report`) oraz wizualizację macierzy pomyłek (`confusion_matrix`).
 
-```
-pip install jupyterlab
-```
+---
 
-You can also start JupyterLab:
+## Uruchamianie pipeline'u
 
-```
-kedro jupyter lab
-```
+1. **Uruchomienie domyślnego pipeline'u Kedro:**
+   ```bash
+   kedro run
+   ```
+   To polecenie uruchamia domyślny pipeline, który obejmuje zarówno etap data engineering, jak i data science (jeśli są połączone w domyślnej konfiguracji).
 
-### IPython
-And if you want to run an IPython session:
+2. **Uruchomienie wybranego pipeline'u:**
+   Możesz uruchomić tylko wybraną część, np.:
+   - Tylko data engineering:
+     ```bash
+     kedro run --pipeline=de
+     ```
+   - Tylko data science:
+     ```bash
+     kedro run --pipeline=ds
+     ```
 
-```
-kedro ipython
-```
+3. **Parametry pipeline'u** znajdują się w plikach `conf/base/parameters_data_engineering.yml`, `parameters_data_science.yml` oraz `parameters.yml`.
 
-### How to ignore notebook output cells in `git`
-To automatically strip out all output cell contents before committing to `git`, you can use tools like [`nbstripout`](https://github.com/kynan/nbstripout). For example, you can add a hook in `.git/config` with `nbstripout --install`. This will run `nbstripout` before anything is committed to `git`.
+---
 
-> *Note:* Your output cells will be retained locally.
+## Przydatne polecenia
 
-## Package your Kedro project
+- **Instalacja zależności:**  
+  `pip install -r requirements.txt`
 
+<<<<<<< HEAD
 [Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/tutorial/package_a_project.html)
 
 ## Pipeline Data Engineering
@@ -149,3 +187,36 @@ Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowan
   - Raporty mogą być zapisywane do plików i wykorzystywane do dalszej analizy.
 
 ---
+=======
+- **Instalacja DVC z obsługą GDrive:**  
+  `pip install "dvc[gdrive]"`
+
+- **Konfiguracja DVC z kluczem:**  
+  `python .dvc/setup_dvc.py /pełna/ścieżka/do/dvc-gdrive-key.json`
+
+- **Pobranie modeli z DVC:**  
+  `dvc pull AutogluonModels.dvc`
+
+- **Uruchomienie pipeline'u:**  
+  `kedro run`
+
+- **Testy:**  
+  `pytest`
+
+- **Podgląd struktury katalogów:**  
+  `tree -L 2`
+
+---
+
+## Uwagi końcowe
+
+- Nie commituj danych ani modeli do repozytorium – korzystaj z DVC.
+- Parametry pipeline'ów i ścieżki do danych ustawiaj w plikach konfiguracyjnych w `conf/`.
+- Przed uruchomieniem pipeline'u upewnij się, że masz pobrane wymagane dane i modele przez DVC.
+- Do pobrania danych z DVC wymagany jest klucz serwisowy Google, który zostanie dostarczony recenzentowi.
+- Skrypt `.dvc/setup_dvc.py` automatycznie skonfiguruje DVC do pracy z GDrive.
+
+---
+
+**W razie pytań lub problemów – sprawdź dokumentację Kedro, DVC lub skontaktuj się z zespołem!**
+>>>>>>> main
