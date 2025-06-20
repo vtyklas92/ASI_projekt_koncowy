@@ -1,8 +1,8 @@
 name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
-  push:
-    branches: [ azure_test ]
+  # push:
+  #   branches: [ main ] # Jeśli ma wykonywać sie po pushu na główny branch - do odkomentowania
   workflow_dispatch:
 
 env:
@@ -53,7 +53,7 @@ jobs:
       run: |
         docker build \
           --build-arg LATEST_MODEL_DIR=${{ env.LATEST_MODEL_DIR }} \
-          -f asi-project/Dockerfile \
+          -f asi-project/Dockerfile.azure \
           -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }} \
           -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:latest \
           .
