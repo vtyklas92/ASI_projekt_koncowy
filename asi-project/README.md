@@ -11,6 +11,7 @@
 - [Aplikacja Streamlit: Pokédex AI](#aplikacja-streamlit-pokédex-ai)
 - [Uruchamianie pipeline'u](#uruchamianie-pipelineu)
 - [Przydatne polecenia](#przydatne-polecenia)
+- [Pipeline'y CI/CD (GitHub Actions)](#pipeline-y-cicd-github-actions)
 
 ---
 
@@ -204,6 +205,25 @@ Pokédex AI to aplikacja webowa napisana w Pythonie, oparta na **Streamlit** i *
 
 - **Podgląd struktury katalogów:**  
   `tree -L 2`
+
+---
+
+## Pipeline'y CI/CD (GitHub Actions)
+
+W projekcie dostępne są dwa pipeline'y CI/CD oparte o GitHub Actions:
+- **Wersja dla Azure (deploy-main-aci.yml)** – buduje obraz Dockera, pobiera model przez DVC i wdraża aplikację na Azure Container Instances (ACI).
+- **Wersja dla Google Cloud (deploy-main-gc.yml)** – analogiczny pipeline przygotowany pod wdrożenie na Google Cloud (np. Cloud Run lub GKE).
+
+### Najważniejsze informacje:
+- Pipeline'y są uruchamiane **ręcznie** (przez workflow_dispatch) – nie odpalają się automatycznie po każdym pushu.
+- Każdy pipeline:
+  - pobiera kod z repozytorium,
+  - pobiera model przez DVC (z Google Drive),
+  - buduje zoptymalizowany obraz Dockera,
+  - wypycha obraz do rejestru kontenerów,
+  - wdraża aplikację na wybraną chmurę (Azure lub Google Cloud).
+
+Aby uruchomić pipeline, przejdź do zakładki **Actions** w GitHub, wybierz odpowiedni workflow i kliknij „Run workflow”.
 
 ---
 
