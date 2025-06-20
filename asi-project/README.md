@@ -8,6 +8,7 @@
 - [Konfiguracja DVC z Google Drive](#konfiguracja-dvc-z-google-drive)
 - [Pipeline Data Engineering](#pipeline-data-engineering)
 - [Pipeline Data Science](#pipeline-data-science)
+- [Aplikacja Streamlit: Pokédex AI](#aplikacja-streamlit-pokédex-ai)
 - [Uruchamianie pipeline'u](#uruchamianie-pipelineu)
 - [Przydatne polecenia](#przydatne-polecenia)
 
@@ -106,6 +107,46 @@ Kod znajduje się w:
 
 ---
 
+## Aplikacja Streamlit: Pokédex AI
+
+Pokédex AI to aplikacja webowa napisana w Pythonie, oparta na **Streamlit** i **AutoGluon**, służąca do rozpoznawania Pokémonów na przesłanych zdjęciach oraz pobierania szczegółowych informacji z PokéAPI.
+
+### Najważniejsze funkcje:
+- Klasyfikacja Pokémonów ze zdjęcia
+- Wbudowany model AutoGluon Multimodal
+- Integracja z [PokéAPI](https://pokeapi.co)
+- Stylizowany interfejs użytkownika (CSS i animacje)
+- Przycisk resetujący stan aplikacji
+
+### Wymagania
+- streamlit
+- pandas
+- requests
+- Pillow
+- autogluon.multimodal
+
+### Uruchamianie aplikacji
+1. Upewnij się, że katalog `AutogluonModels/` zawiera wytrenowany model (jeśli korzystasz z DVC, pobierz go poleceniem `dvc pull`).
+2. Przejdź do katalogu `streamlit_app`:
+   ```bash
+   cd streamlit_app
+   ```
+3. Uruchom aplikację:
+   ```bash
+   streamlit run app.py
+   ```
+
+### Jak korzystać
+1. Wgraj zdjęcie Pokémona (obsługiwane formaty: PNG, JPG, JPEG)
+2. Kliknij "Rozpoznaj Pokémona"
+3. Otrzymasz:
+   - nazwę rozpoznanego Pokémona
+   - procentową pewność predykcji
+   - dane z PokéAPI: nazwa, doświadczenie bazowe, wzrost (m), waga (kg)
+4. Kliknij "Wyczyść wszystko", aby rozpocząć nową klasyfikację
+
+---
+
 ## Uruchamianie pipeline'u
 
 1. **Uruchomienie domyślnego pipeline'u Kedro:**
@@ -133,90 +174,3 @@ Kod znajduje się w:
 
 - **Instalacja zależności:**  
   `pip install -r requirements.txt`
-
-<<<<<<< HEAD
-[Further information about building project documentation and packaging your project](https://docs.kedro.org/en/stable/tutorial/package_a_project.html)
-
-## Pipeline Data Engineering
-
-Kod znajduje się w:
-`src/asi_project/pipelines/data_engineering/`
-
-Moduł odpowiedzialny za przygotowanie danych do dalszych etapów analizy i modelowania.
-
-### Główne funkcje:
-- **create_pokemon_dataframe**  
-  Skanuje katalog z surowymi danymi (np. obrazami Pokémonów), gdzie każdy podfolder reprezentuje jedną klasę (np. nazwę Pokémona). Funkcja:
-  - Przechodzi przez wszystkie podfoldery w katalogu surowych danych.
-  - Zbiera ścieżki do plików graficznych (.png, .jpg, .jpeg) oraz odpowiadające im etykiety (nazwy podfolderów).
-  - Tworzy ramkę danych (DataFrame) z dwiema kolumnami: `image` (pełna ścieżka do pliku) oraz `label` (klasa).
-  - Oczekuje parametru `raw_data_path` w pliku konfiguracyjnym.
-  - Zwraca DataFrame gotowy do dalszego przetwarzania.
-
-- **split_data**  
-  Dzieli dane na zbiory treningowe i testowe z zachowaniem proporcji klas (stratyfikacja). Funkcja:
-  - Przyjmuje DataFrame z obrazami i etykietami.
-  - Wykorzystuje parametry z plików konfiguracyjnych (`test_size`, `target_column`, `random_state`).
-  - Zapewnia, że rozkład klas w obu zbiorach jest taki sam jak w oryginalnych danych.
-  - Zwraca dwa DataFrame: zbiór treningowy i testowy.
-
----
-
-## Pipeline Data Science
-
-Kod znajduje się w:
-`src/asi_project/pipelines/data_science/`
-
-Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowanych danych.
-
-### Główne funkcje:
-- **train_model**  
-  Trenuje model klasyfikacji obrazów przy użyciu `autogluon.multimodal.MultiModalPredictor`. Funkcja:
-  - Przyjmuje zbiór treningowy (DataFrame) oraz parametry treningu (np. `time_limit`, `presets`, `eval_metric`, `target_column`).
-  - Dane treningowe są zapisywane tymczasowo do pliku CSV, aby zapewnić kompatybilność z AutoGluon.
-  - Inicjalizuje i trenuje model klasyfikacyjny na podstawie przekazanych parametrów.
-  - Zwraca wytrenowany obiekt predyktora, gotowy do predykcji i ewaluacji.
-
-- **evaluate_model**  
-  Ocenia jakość wytrenowanego modelu na zbiorze testowym. Funkcja:
-  - Przyjmuje wytrenowany model oraz zbiór testowy (DataFrame).
-  - Generuje predykcje dla zbioru testowego.
-  - Tworzy szczegółowy raport klasyfikacji (precision, recall, f1-score dla każdej klasy).
-  - Generuje i wizualizuje macierz pomyłek (confusion matrix) jako wykres.
-  - Zwraca raport klasyfikacji oraz obiekt wykresu macierzy pomyłek.
-  - Raporty mogą być zapisywane do plików i wykorzystywane do dalszej analizy.
-
----
-=======
-- **Instalacja DVC z obsługą GDrive:**  
-  `pip install "dvc[gdrive]"`
-
-- **Konfiguracja DVC z kluczem:**  
-  `python .dvc/setup_dvc.py /pełna/ścieżka/do/dvc-gdrive-key.json`
-
-- **Pobranie modeli z DVC:**  
-  `dvc pull AutogluonModels.dvc`
-
-- **Uruchomienie pipeline'u:**  
-  `kedro run`
-
-- **Testy:**  
-  `pytest`
-
-- **Podgląd struktury katalogów:**  
-  `tree -L 2`
-
----
-
-## Uwagi końcowe
-
-- Nie commituj danych ani modeli do repozytorium – korzystaj z DVC.
-- Parametry pipeline'ów i ścieżki do danych ustawiaj w plikach konfiguracyjnych w `conf/`.
-- Przed uruchomieniem pipeline'u upewnij się, że masz pobrane wymagane dane i modele przez DVC.
-- Do pobrania danych z DVC wymagany jest klucz serwisowy Google, który zostanie dostarczony recenzentowi.
-- Skrypt `.dvc/setup_dvc.py` automatycznie skonfiguruje DVC do pracy z GDrive
-
----
-
-**W razie pytań lub problemów – sprawdź dokumentację Kedro, DVC lub skontaktuj się z zespołem!**
->>>>>>> main
