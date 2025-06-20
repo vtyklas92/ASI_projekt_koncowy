@@ -2,7 +2,7 @@ name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
   push:
-    branches: [ main ]
+    branches: [ azure_test ]
   workflow_dispatch:
 
 env:
