@@ -10,7 +10,6 @@ on:
 
 jobs:
   build-push:
-    name: Build and Push to GHCR
     runs-on: ubuntu-latest
 
     steps:
@@ -22,14 +21,18 @@ jobs:
       with:
         python-version: '3.11'
 
-    - name: Install DVC with GDrive support
-      run: pip install dvc[gdrive]
-
-    - name: Restore GDrive config for DVC
+    - name: Install dependencies
       run: |
-        mkdir -p ~/.config/gdrive
-        echo "${{ secrets.GCP_SA_KEY_JSON }}" | base64 -d > gdrive_config.tar.gz
-        tar xzf gdrive_config.tar.gz -C ~/.config/gdrive --strip-components=1
+        pip install dvc[gdrive]
+
+    - name: Write service account JSON key
+      env:
+        GCP_SA_KEY_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
+      run: |
+        echo "$GCP_SA_KEY_JSON" > /tmp/gdrive_sa_key.json
+
+    - name: Run DVC setup script
+      run: python .dvc/setup_dvc.py /tmp/gdrive_sa_key.json
 
     - name: Pull data and model via DVC
       run: dvc pull
