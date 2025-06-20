@@ -1,13 +1,16 @@
-name: Build and Push Docker Image with DVC + GHCR
+name: Build and Push Docker Image with DVC + GDrive + GHCR
 
 on:
   push:
     branches:
-      - main   # lub inna główna gałąź
+      - main
+  pull_request:
+    branches:
+      - main
 
 jobs:
   build-push:
-    name: Build and Push Docker Image
+    name: Build and Push to GHCR
     runs-on: ubuntu-latest
 
     steps:
@@ -17,25 +20,21 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'  # lub inna wersja jakiej używasz
+        python-version: '3.11'
 
-    - name: Install DVC + deps
+    - name: Install DVC with GDrive support
+      run: pip install dvc[gdrive]
+
+    - name: Restore GDrive config for DVC
       run: |
-        pip install dvc[gcs]  # lub [s3], zależnie od Twojego remote
-        pip install -r requirements.txt  # jeśli potrzebne
+        mkdir -p ~/.config/gdrive
+        echo "${{ secrets.GCP_SA_KEY_JSON }}" | base64 -d > gdrive_config.tar.gz
+        tar xzf gdrive_config.tar.gz -C ~/.config/gdrive --strip-components=1
 
-    - name: Authenticate to GCS (DVC remote)
-      # Jeśli masz plik JSON jako secret
-      env:
-        GOOGLE_APPLICATION_CREDENTIALS_JSON: ${{ secrets.GCP_SA_KEY_JSON }}
-      run: |
-        echo "$GOOGLE_APPLICATION_CREDENTIALS_JSON" > /tmp/gcp_key.json
-        export GOOGLE_APPLICATION_CREDENTIALS=/tmp/gcp_key.json
-
-    - name: Pull data and model from DVC
+    - name: Pull data and model via DVC
       run: dvc pull
 
-    - name: Log in to GHCR
+    - name: Log in to GitHub Container Registry (GHCR)
       uses: docker/login-action@v3
       with:
         registry: ghcr.io
