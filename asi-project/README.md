@@ -214,7 +214,7 @@ Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowan
 - Parametry pipeline'ów i ścieżki do danych ustawiaj w plikach konfiguracyjnych w `conf/`.
 - Przed uruchomieniem pipeline'u upewnij się, że masz pobrane wymagane dane i modele przez DVC.
 - Do pobrania danych z DVC wymagany jest klucz serwisowy Google, który zostanie dostarczony recenzentowi.
-- Skrypt `.dvc/setup_dvc.py` automatycznie skonfiguruje DVC do pracy z GDrive.
+- Skrypt `.dvc/setup_dvc.py` automatycznie skonfiguruje DVC do pracy z GDrive
 
 ---
 
