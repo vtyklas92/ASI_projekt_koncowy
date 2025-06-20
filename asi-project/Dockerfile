@@ -29,7 +29,7 @@
     COPY asi-project/streamlit_app/ ./streamlit_app/
     COPY asi-project/src/ ./src/
     COPY asi-project/conf/ ./conf/
-    COPY asi-project/AutogluonModels/${LATEST_MODEL_DIR} ./AutogluonModels/
+    COPY asi-project/AutogluonModels/${LATEST_MODEL_DIR} ./AutogluonModels/${LATEST_MODEL_DIR}/
     RUN ls -l ./AutogluonModels/
     RUN find ./AutogluonModels
     
