@@ -1,8 +1,8 @@
-name: Zbuduj i Wdróż Aplikację Streamlit na ACI
+name: Zbuduj i Wdróż Aplikację Streamlit na ACI z DVC
 
 on:
   push:
-    branches: [ azure_test]
+    branches: [ azure_test ] # Zmieniono z powrotem na 'main' - zmień, jeśli używasz innego głównego brancha
   workflow_dispatch:
 
 env:
@@ -17,32 +17,70 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-    # Kroki budowania obrazu - pozostają takie same
-    - name: 'Pobierz kod (Checkout)'
+    - name: '1. Pobierz kod (Checkout)'
       uses: actions/checkout@v4
+      with:
+        # Upewniamy się, że pliki śledzone przez LFS (jeśli istnieją) są pobierane
+        lfs: true
 
-    - name: 'Zaloguj się do Azure'
+    - name: '2. Konfiguracja środowiska Python'
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: '3. Zainstaluj DVC i pobierz dane modeli'
+      env:
+        # Bezpiecznie przekazujemy zawartość pliku .json z sekretów
+        DVC_JSON_CREDS: ${{ secrets.DVC_CREDENTIALS_JSON }}
+      run: |
+        # Krok 1: Zainstaluj DVC z obsługą Twojej chmury (np. Google Cloud Storage)
+        pip install "dvc[gdrive]"
+
+        # Krok 2: Odtwórz plik z danymi logowania na maszynie budującej
+        echo "$DVC_JSON_CREDS" > dvc_credentials.json
+        
+        # Krok 3: Ustaw zmienną środowiskową wskazującą na ten plik
+        export GOOGLE_APPLICATION_CREDENTIALS=$(pwd)/dvc_credentials.json
+        
+        # Krok 4: Pobierz tylko dane modeli w wersji z najnowszego commita
+        dvc pull asi-project/AutogluonModels.dvc --force
+
+    - name: '4. Zaloguj się do Azure'
       uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-    - name: 'Zaloguj się do Azure Container Registry (ACR)'
+    - name: '5. Zaloguj się do Azure Container Registry (ACR)'
       run: |
         az acr login --name $ACR_LOGIN_SERVER
 
-    - name: 'Zbuduj i wypchnij obraz Docker'
+    - name: '6. Znajdź najnowszy folder z modelem'
+      id: find_model
       run: |
-        docker build -f asi-project/Dockerfile . -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }}
+        # Skrypt przegląda pobrane foldery modeli i wybiera najnowszy na podstawie nazwy
+        LATEST_MODEL=$(ls -1 asi-project/AutogluonModels | sort -r | head -n 1)
+        echo "Znaleziono najnowszy model do spakowania: $LATEST_MODEL"
+        echo "LATEST_MODEL_DIR=$LATEST_MODEL" >> $GITHUB_ENV
+
+    - name: '7. Zbuduj i wypchnij zoptymalizowany obraz Docker'
+      run: |
+        # Budujemy obraz, przekazując nazwę najnowszego modelu jako argument
+        # Dzięki temu do obrazu trafi tylko jeden, wybrany model
+        docker build \
+          --build-arg LATEST_MODEL_DIR=${{ env.LATEST_MODEL_DIR }} \
+          -f asi-project/Dockerfile \
+          -t $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }} \
+          .
+        
+        # Wypychamy gotowy obraz do naszego rejestru w Azure
         docker push $ACR_LOGIN_SERVER/$ACR_REPOSITORY_NAME:${{ github.sha }}
 
-    # Nowy krok: Wdrożenie na ACI
-    - name: 'Wdróż na Azure Container Instances (ACI)'
+    - name: '8. Wdróż najnowszy obraz na Azure Container Instances (ACI)'
       run: |
-        # Krok A: Usuń poprzednią wersję kontenera, jeśli istnieje.
-        # "|| true" sprawia, że krok nie zakończy się błędem, jeśli kontener nie istnieje (przy pierwszym uruchomieniu).
+        # Krok A: Usuń poprzednią wersję kontenera, aby zrobić miejsce na nową
         az container delete --name $ACI_CONTAINER_NAME --resource-group $RESOURCE_GROUP --yes || true
 
-        # Krok B: Stwórz nowy kontener z najnowszym obrazem.
+        # Krok B: Stwórz nowy kontener z najnowszym obrazem z naszego rejestru
         az container create \
           --resource-group $RESOURCE_GROUP \
           --name $ACI_CONTAINER_NAME \
@@ -51,8 +89,3 @@ jobs:
           --ports 8501 \
           --cpu 1 \
           --memory 1.5
-
-        # Uwaga: Nie podajemy tu --registry-username i --registry-password.
-        # Działa to, ponieważ zalogowaliśmy się do Azure za pomocą Service Principal,
-        # który ma uprawnienia 'Contributor' do grupy zasobów, co pozwala mu na
-        # automatyczne uwierzytelnienie się i pobranie obrazu z ACR w tej samej grupie.
