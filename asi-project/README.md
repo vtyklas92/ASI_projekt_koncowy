@@ -98,12 +98,24 @@ Kod znajduje się w:
 Kod znajduje się w:
 `src/asi_project/pipelines/data_science/`
 
+Moduł odpowiedzialny za trening i ocenę modelu klasyfikacyjnego na przygotowanych danych.
+
 ### Główne funkcje:
 - **train_model**  
-  Trenuje model klasyfikacji obrazów przy użyciu `autogluon.multimodal.MultiModalPredictor`. Dane treningowe są zapisywane tymczasowo do pliku CSV, a następnie model jest trenowany na tym pliku. Parametry treningu (np. `time_limit`, `presets`, `eval_metric`, `target_column`) są przekazywane przez config.
+  Trenuje model klasyfikacji obrazów przy użyciu `autogluon.multimodal.MultiModalPredictor`. Funkcja:
+  - Przyjmuje zbiór treningowy (DataFrame) oraz parametry treningu (np. `time_limit`, `presets`, `eval_metric`, `target_column`).
+  - Dane treningowe są zapisywane tymczasowo do pliku CSV, aby zapewnić kompatybilność z AutoGluon.
+  - Inicjalizuje i trenuje model klasyfikacyjny na podstawie przekazanych parametrów.
+  - Zwraca wytrenowany obiekt predyktora, gotowy do predykcji i ewaluacji.
 
 - **evaluate_model**  
-  Ocenia wytrenowany model na zbiorze testowym. Generuje raport klasyfikacji (`classification_report`) oraz wizualizację macierzy pomyłek (`confusion_matrix`).
+  Ocenia jakość wytrenowanego modelu na zbiorze testowym. Funkcja:
+  - Przyjmuje wytrenowany model oraz zbiór testowy (DataFrame).
+  - Generuje predykcje dla zbioru testowego.
+  - Tworzy szczegółowy raport klasyfikacji (precision, recall, f1-score dla każdej klasy).
+  - Generuje i wizualizuje macierz pomyłek (confusion matrix) jako wykres.
+  - Zwraca raport klasyfikacji oraz obiekt wykresu macierzy pomyłek.
+  - Raporty mogą być zapisywane do plików i wykorzystywane do dalszej analizy.
 
 ---
 
@@ -174,3 +186,36 @@ Pokédex AI to aplikacja webowa napisana w Pythonie, oparta na **Streamlit** i *
 
 - **Instalacja zależności:**  
   `pip install -r requirements.txt`
+
+- **Instalacja DVC z obsługą GDrive:**  
+  `pip install "dvc[gdrive]"`
+
+- **Konfiguracja DVC z kluczem:**  
+  `python .dvc/setup_dvc.py /pełna/ścieżka/do/dvc-gdrive-key.json`
+
+- **Pobranie modeli z DVC:**  
+  `dvc pull AutogluonModels.dvc`
+
+- **Uruchomienie pipeline'u:**  
+  `kedro run`
+
+- **Testy:**  
+  `pytest`
+
+- **Podgląd struktury katalogów:**  
+  `tree -L 2`
+
+---
+
+## Uwagi końcowe
+
+- Nie commituj danych ani modeli do repozytorium – korzystaj z DVC.
+- Parametry pipeline'ów i ścieżki do danych ustawiaj w plikach konfiguracyjnych w `conf/`.
+- Przed uruchomieniem pipeline'u upewnij się, że masz pobrane wymagane dane i modele przez DVC.
+- Do pobrania danych z DVC wymagany jest klucz serwisowy Google, który zostanie dostarczony recenzentowi.
+- Skrypt `.dvc/setup_dvc.py` automatycznie skonfiguruje DVC do pracy z GDrive
+
+---
+
+**W razie pytań lub problemów – sprawdź dokumentację Kedro, DVC lub skontaktuj się z zespołem!**
+
