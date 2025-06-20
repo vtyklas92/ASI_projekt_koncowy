@@ -27,7 +27,7 @@ To install them, run:
 pip install -r requirements.txt
 ```
 
-## How to run your Kedro pipeline
+## How to run your Kedro pipeline:
 
 You can run your Kedro project with:
 
