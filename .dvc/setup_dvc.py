@@ -7,10 +7,6 @@ def run_command(command, check_success=True):
     """Pomocnicza funkcja do uruchamiania komend i sprawdzania sukcesu."""
     print(f"Wykonuję komendę: {' '.join(command)}")
     try:
-        # shell=True jest potrzebne, jeśli komenda zawiera np. przekierowania lub pipeline'y
-        # W przypadku DVC, komendy są proste, więc shell=False jest bezpieczniejsze
-        # Ale dla prostoty i kompatybilności możemy użyć shell=True z uwagi na DVC.
-        # Lepszym rozwiązaniem byłoby przekazywanie komend jako listę argumentów bez shell=True.
         result = subprocess.run(
             command, check=True, capture_output=True, text=True, shell=False
         )
@@ -34,8 +30,6 @@ def run_command(command, check_success=True):
 
 
 def setup_dvc_gdrive(json_key_path):
-    # Konwersja ścieżki na format specyficzny dla OS
-    # os.path.abspath normalizuje ścieżkę, os.path.normpath radzi sobie ze slashami
     normalized_path = os.path.abspath(os.path.normpath(json_key_path))
 
     print("Konfigurowanie DVC dla zdalnego 'mygdrive' z użyciem konta usługi...")
@@ -85,7 +79,6 @@ if __name__ == "__main__":
 
     json_key_path_arg = sys.argv[1]
 
-    # Sprawdź, czy plik JSON istnieje
     if not os.path.isfile(json_key_path_arg):
         print(f"Błąd: Podany plik JSON nie istnieje: {json_key_path_arg}")
         print("Upewnij się, że ścieżka jest poprawna.")
